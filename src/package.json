@@ -1,0 +1,24 @@
+{
+  "name": "trainempire",
+  "version": "1.0.0",
+  "description": "A skill that plays a strategy game building train stations and connecting them.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/terrenjpeterson/trainempire.git"
+  },
+  "keywords": [
+    "alexa",
+    "skill",
+    "trains"
+  ],
+  "author": "Terren Peterson",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "alexa-sdk": "^1.0.6",
+    "voicelabs": "^1.0.1"
+  }
+}
