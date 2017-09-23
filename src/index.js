@@ -11,22 +11,79 @@ const monthlyStationCosts = 2500000;
 const monthlyRailMilageCosts = 10000;
 
 // these are the available cities when the game initially begins
-var cities = ["Washington","New York","Baltimore","Richmond","Wilmington","Charlotte"];
+var cities = ["New York","Los Angeles","Chicago","Dallas","Houston","Washington",
+    "Philadelphia","Miami","Atlanta","Boston","San Francisco","Phoenix","Riverside",
+    "Detroit","Seattle","Minneapolis","San Diego","Tampa","Denver", "Baltimore",
+    "Charlotte","Orlando","San Antonio","Portland",
+    "Milwaukee","Indianapolis","Richmond","Wilmington"];
 
 // this is the population between cities
 var cityPopulations = [
+    { "cityName":"New York",    "population":20000000 },
+    { "cityName":"Los Angeles", "population":13300000 },
+    { "cityName":"Chicago",     "population":9500000 },
+    { "cityName":"Dallas",      "population":7200000 },
+    { "cityName":"Houston",     "population":6700000 },
+    { "cityName":"Washington",  "population":6100000 },
+    { "cityName":"Philadelphia","population":6000000 },
+    { "cityName":"Miami",       "population":6000000 },
+    { "cityName":"Atlanta",     "population":5700000 },
+    { "cityName":"Boston",      "population":4800000 },
+    { "cityName":"San Francisco","population":4700000 },
+    { "cityName":"Phoenix",     "population":4700000 },
+    { "cityName":"Riverside",   "population":4500000 },
+    { "cityName":"Detroit",     "population":4300000 },
+    { "cityName":"Seattle",     "population":3800000 },
+    { "cityName":"Minneapolis", "population":3500000 },
+    { "cityName":"San Diego",   "population":3300000 },
+    { "cityName":"Tampa",       "population":3000000 },
+    { "cityName":"Denver",      "population":2800000 },
+    { "cityName":"Baltimore",   "population":2700000 },
+    { "cityName":"Charlotte",   "population":2500000 },
+    { "cityName":"Orlando",     "population":2400000 },
+    { "cityName":"San Antonio", "population":2400000 },
+    { "cityName":"Portland",    "population":2400000 },
     { "cityName":"Richmond",    "population":1000000 },
-    { "cityName":"Washington",  "population":3500000 },
-    { "cityName":"New York",    "population":10000000 },
-    { "cityName":"Baltimore",   "population":1500000 },
     { "cityName":"Wilmington",  "population":500000 },
-    { "cityName":"Charlotte",   "population":2000000},
-    { "cityName":"Virginia Beach", "population":1700000},
-    { "cityName":"Raleigh",     "population":1200000}
+    { "cityName":"Virginia Beach", "population":1700000 },
+    { "cityName":"Raleigh",     "population":1200000 },
+    { "cityName":"Milwaukee",   "population":2000000 },
+    { "cityName":"St. Louis",   "population":2800000 },
+    { "cityName":"Indianapolis","population":1000000 }
 ];
 
 // these are the valid connections between cities including their distances
 var cityConnections = [
+    {
+        "fromCity":"New York",
+        "distances":[
+            {"toCity":"Baltimore","distance":190},
+            {"toCity":"Washington","distance":226},
+            {"toCity":"Boston","distance":190},
+            {"toCity":"Philadelphia","distance":97},
+            {"toCity":"Hartford","distance":116},
+            {"toCity":"Wilmington","distance":127}
+        ]
+    },
+    {
+        "fromCity":"Los Angeles",
+        "distances":[
+            {"toCity":"Riverside","distance":60},
+            {"toCity":"San Francisco","distance":380},
+            {"toCity":"San Diego","distance":120},
+            {"toCity":"Phoenix","distance":370}
+            ]
+    },
+    {
+        "fromCity":"Chicago",
+        "distances":[
+            {"toCity":"Milwaukee","distance":93},
+            {"toCity":"St. Louis","distance":310},
+            {"toCity":"Indianapolis","distance":180},
+            {"toCity":"Minneapolis","distance":410},
+            {"toCity":"Detroit","distance":280}
+            ]
+    },
     {
         "fromCity":"Washington",
         "distances":[
@@ -52,17 +109,6 @@ var cityConnections = [
             {"toCity":"Washington","distance":40},
             {"toCity":"Philadelphia","distance":105},
             {"toCity":"Wilmington","distance":65}
-        ]
-    },
-    {
-        "fromCity":"New York",
-        "distances":[
-            {"toCity":"Baltimore","distance":190},
-            {"toCity":"Washington","distance":226},
-            {"toCity":"Boston","distance":190},
-            {"toCity":"Philadelphia","distance":97},
-            {"toCity":"Hartford","distance":116},
-            {"toCity":"Wilmington","distance":127}
         ]
     }
 ];
@@ -106,7 +152,7 @@ var newSessionHandlers = {
 
             var audioOutput = "Welcome to Train Empire";
                 audioOutput = audioOutput + "<break time=\"1s\"/>";
-            //    audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/baseballgame/opening.mp3\" />";
+                audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
                 audioOutput = audioOutput + "Are you ready to begin?";
 
             this.handler.state = states.STARTMODE;
@@ -245,11 +291,11 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             // go through the connections between cities to find a match with the distance
             for (var i = 0; i < cityConnections.length; i++ ) {
                 // start by matching the starting point city name
-                if (fromCity === cityConnections[i].fromCity) {
+                if (fromCity.toLowerCase() === cityConnections[i].fromCity.toLowerCase()) {
                     console.log("From city is valid : " + fromCity);
                     for (var j = 0; j < cityConnections[i].distances.length; j++) {
                         // check if destination matches the request.
-                        if (toCity === cityConnections[i].distances[j].toCity) {
+                        if (toCity.toLowerCase() === cityConnections[i].distances[j].toCity.toLowerCase()) {
                             console.log("Matched Route at a distance of " + cityConnections[i].distances[j].distance);
                             routeDistance = cityConnections[i].distances[j].distance;
                             validRoute = true;
@@ -306,7 +352,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         if (this.event.request.intent.slots.CityName.value) {
             console.log("validate city name: " + this.event.request.intent.slots.CityName.value);
             for (var i = 0; i < cities.length; i++) {
-                if (this.event.request.intent.slots.CityName.value === cities[i]) {
+                if (this.event.request.intent.slots.CityName.value.toLowerCase() === cities[i].toLowerCase()) {
                     console.log(cities[i] + " is a valid city name.")
                     validStation = true;
                 }
@@ -316,7 +362,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         if (validStation) {
             var currentStations = this.attributes['stations'];
             for (var i = 0; i < currentStations.length; i++) {
-                if (currentStations[i] === this.event.request.intent.slots.CityName.value) {
+                if (currentStations[i].toLowerCase() === this.event.request.intent.slots.CityName.value.toLowerCase()) {
                     console.log("station: " + this.event.request.intent.slots.CityName.value + " already built.");
                     duplicateStation = true;
                 }
@@ -344,7 +390,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 var recommendCity = "";
                 // find out what cities it can be connected to
                 for (var i = 0; i < cityConnections.length; i++) {
-                    if (cityConnections[i].fromCity === cityName) {
+                    if (cityConnections[i].fromCity.toLowerCase() === cityName.toLowerCase()) {
                         speechOutput = speechOutput + "That station can be connected to ";
                         console.log(JSON.stringify(cityConnections[i].distances));
                         for (var j = 0; j < cityConnections[i].distances.length; j++) {
@@ -399,13 +445,16 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             // retrieve the current connections
             var currentConnections = this.attributes['connections'];
             var currentStations = this.attributes['stations'];
+            
             // create an object with the slots provided by the user
             var connection = {};
                 connection.fromCity = this.event.request.intent.slots.FromCity.value;
                 connection.toCity = this.event.request.intent.slots.ToCity.value;
+
             // validate the connection - this is in a separate function
             var validConnection = validateConnection(currentConnections, currentStations, connection);
             console.log(JSON.stringify(validConnection));
+
             if (validConnection.newConnection.valid) {
                 var connectionDistance = validConnection.newConnection.routeDistance;
                 // these attributes are needed to calculate financials when running the trains
@@ -446,6 +495,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     "RunTrains": function() {
         console.log("run the trains");
         var speechOutput = "Running the trains for month " + this.attributes['month'] + ". ";
+            speechOutput = speechOutput + "<break time=\"1s\"/>";
+            speechOutput = speechOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
+
         this.attributes['month']++;
         var repromptOutput = "Try again?";
         // first check to see if enough progress has been made to run trains
@@ -535,7 +587,7 @@ function runCalculations(currentConnections, currentStations) {
         var toCityPopulation = 0;
         var fromCityPopulation = 0;
         for (var m = 0; m < cityPopulations.length; m++) {
-            if (cityPopulations[m].cityName === currentConnections[k].toCity) {
+            if (cityPopulations[m].cityName.toLowerCase() === currentConnections[k].toCity.toLowerCase()) {
                 toCityPopulation = cityPopulations[m].population;
             } else if (cityPopulations[m].cityName === currentConnections[k].fromCity) {
                 fromCityPopulation = cityPopulations[m].population;
@@ -592,8 +644,8 @@ function validateConnection(currentConnections, currentStations, connection) {
     // check for duplicates that the connection has already been made
     for (var i = 0; i < currentConnections.length; i++) {
         console.log("Check for duplicates");
-        if (currentConnections[i].fromCity === connection.fromCity && 
-            currentConnections[i].toCity === connection.toCity) {
+        if (currentConnections[i].fromCity.toLowerCase() === connection.fromCity.toLowerCase() && 
+            currentConnections[i].toCity.toLowerCase() === connection.toCity.toLowerCase()) {
             newConnection.valid = false;
             newConnection.errorMessage = "Duplicate. This connection already exists."
         }
@@ -605,10 +657,10 @@ function validateConnection(currentConnections, currentStations, connection) {
         var validFromCity = false;
         var validToCity = false;
         for (var j = 0; j < currentStations.length; j++) {
-            if (currentStations[j] === connection.fromCity) {
+            if (currentStations[j].toLowerCase() === connection.fromCity.toLowerCase()) {
                 validFromCity = true;
             }
-            if (currentStations[j] === connection.toCity) {
+            if (currentStations[j].toLowerCase() === connection.toCity.toLowerCase()) {
                 validToCity = true;
             }
         }
@@ -638,11 +690,11 @@ function validateConnection(currentConnections, currentStations, connection) {
         for (var k = 0; k < cityConnections.length; k++) {
             // start by matching the starting point city name
             console.log("matching " + connection.fromCity + " with " + cityConnections[k].fromCity);
-            if (connection.fromCity === cityConnections[k].fromCity) {
+            if (connection.fromCity.toLowerCase() === cityConnections[k].fromCity.toLowerCase()) {
                 console.log("From city is valid : " + connection.fromCity);
                 for (var m = 0; m < cityConnections[k].distances.length; m++) {
                     // check if destination matches the request.
-                    if (connection.toCity === cityConnections[k].distances[m].toCity) {
+                    if (connection.toCity.toLowerCase() === cityConnections[k].distances[m].toCity.toLowerCase()) {
                         console.log("Matched Route at a distance of " + cityConnections[k].distances[m].distance);
                         newConnection.routeDistance = cityConnections[k].distances[m].distance;
                         validRoute = true;
@@ -652,7 +704,7 @@ function validateConnection(currentConnections, currentStations, connection) {
         }
         if (!validRoute) {
             newConnection.valid = false;
-            newConnection.errorMessage = "These stations can't be connected as they are beyond 250 miles."
+            newConnection.errorMessage = "These stations can't be connected as there isn't a direct path between them."
         }
     }
     
