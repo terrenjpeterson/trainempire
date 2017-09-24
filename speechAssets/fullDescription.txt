@@ -1,0 +1,18 @@
+This is a strategy game where the goal is to build a train empire that spans as much of the United States as possible. 
+
+The core gameplay surrounds building out stations, then connecting them together. Then passengers will begin to ride your trains and pay you money. Stations can only connect to cities close-by, so to build an empire, you will need to link many stations together.
+
+Here are the different commands that can be executed within the game.
+
+Build Stations - get started by building two stations in different cities. Just say something like "Build a station in New York."
+
+Connect Stations - once you have stations built, connect them by stating the two city names. For example, say something like "Connect New York to Boston".
+
+Run Empire - Once you have connected trains, passengers will start to ride.  Saying "Run Empire" will operate the trains for a month, gaining you more money to build additional stations.
+
+If you need help, just say "Help", or here are some other phrases that can assist you in finding different options.
+
+How much money do I have? - gives the current balance sheet of cash in your empire that can be spent on building new trains or stations.
+List Cities to build Stations - this lists the different cities that the game allows stations to be built in.
+Which Stations are Connected - this lists what cities you have already built stations in, and what they connect to.
+How much is track from Houston to Dallas - provides the distance between different cities, as well as how much track costs between them.
