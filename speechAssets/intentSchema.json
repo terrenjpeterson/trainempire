@@ -1,0 +1,177 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StartOverIntent",
+      "samples": [
+        "restart game"
+      ]
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": [
+        "goodbye",
+        "pause",
+        "save game",
+        "save"
+      ]
+    },
+    {
+      "name": "BudgetCheck",
+      "samples": [
+        "how much money do i have",
+        "how much do i have to spend",
+        "how much money do i have to spend"
+      ],
+      "slots": []
+    },
+    {
+      "name": "BuildStation",
+      "samples": [
+        "build station in {CityName}",
+        "build a station in {CityName}",
+        "add a station in {CityName}",
+        "add station to {CityName}"
+      ],
+      "slots": [
+        {
+          "name": "CityName",
+          "type": "AMAZON.US_CITY",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "ConnectCities",
+      "samples": [
+        "Connect {FromCity} to {ToCity}",
+        "Add track between {FromCity} to {ToCity}",
+        "Connect {FromCity} and {ToCity}",
+        "Connect {FromCity} with {ToCity}",
+        "Add track between {FromCity} and {ToCity}"
+      ],
+      "slots": [
+        {
+          "name": "FromCity",
+          "type": "AMAZON.US_CITY",
+          "samples": []
+        },
+        {
+          "name": "ToCity",
+          "type": "AMAZON.US_CITY",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "CurrentStations",
+      "samples": [
+        "list current stations",
+        "what are the current stations",
+        "list current locations",
+        "list stations"
+      ],
+      "slots": []
+    },
+    {
+      "name": "DistanceCheck",
+      "samples": [
+        "how far is it between {FromCity} and {ToCity}",
+        "how far between {FromCity} and {ToCity}",
+        "how far is it from {FromCity} to {ToCity}",
+        "how much to build from {FromCity} to {ToCity}",
+        "what does it cost to build from {FromCity} to {ToCity}",
+        "how much is track from {FromCity} to {ToCity}"
+      ],
+      "slots": [
+        {
+          "name": "FromCity",
+          "type": "AMAZON.US_CITY",
+          "samples": []
+        },
+        {
+          "name": "ToCity",
+          "type": "AMAZON.US_CITY",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "Leaderboard",
+      "samples": [
+        "who is on the leaderboard",
+        "list who is on the leaderboard"
+      ],
+      "slots": []
+    },
+    {
+      "name": "ListCities",
+      "samples": [
+        "which cities are there",
+        "which cities can i build train stations in",
+        "list cities to build stations in",
+        "list cities to build train stations in",
+        "list cities to build stations"
+      ],
+      "slots": []
+    },
+    {
+      "name": "ListTracks",
+      "samples": [
+        "what cities are connected",
+        "which cities are connected",
+        "which stations are connected",
+        "what stations are connected"
+      ],
+      "slots": []
+    },
+    {
+      "name": "NO",
+      "samples": [
+        "no",
+        "no thanks"
+      ],
+      "slots": []
+    },
+    {
+      "name": "RunTrains",
+      "samples": [
+        "run trains",
+        "operate trains",
+        "run the empire",
+        "operate the empire",
+        "run my empire"
+      ],
+      "slots": []
+    },
+    {
+      "name": "SetName",
+      "samples": [
+        "Set name to {name}",
+        "Set profile name to {name}",
+        "Set user name to {name}"
+      ],
+      "slots": [
+        {
+          "name": "name",
+          "type": "AMAZON.US_FIRST_NAME",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "YES",
+      "samples": [
+        "yes"
+      ],
+      "slots": []
+    }
+  ]
+}
