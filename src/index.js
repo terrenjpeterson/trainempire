@@ -6,7 +6,7 @@ var appId = 'amzn1.ask.skill.c38bed75-d337-4724-b6ae-731c8f218116';
 // common game variables.
 const startingBudget = 1000000000;
 const stationCost = 100000000;
-const railCostPerMile = 1000000;
+const railCostPerMile = 500000;
 const monthlyStationCosts = 2500000;
 const monthlyRailMilageCosts = 10000;
 
@@ -15,7 +15,8 @@ var cities = ["New York","Los Angeles","Chicago","Dallas","Houston","Washington"
     "Philadelphia","Miami","Atlanta","Boston","San Francisco","Phoenix","Riverside",
     "Detroit","Seattle","Minneapolis","San Diego","Tampa","Denver", "Baltimore",
     "Charlotte","Orlando","San Antonio","Portland",
-    "Milwaukee","Indianapolis","Richmond","Wilmington"];
+    "Milwaukee","Indianapolis","Richmond","Wilmington",
+    "Albuquerque"];
 
 // this is the population between cities
 var cityPopulations = [
@@ -49,7 +50,8 @@ var cityPopulations = [
     { "cityName":"Raleigh",     "population":1200000 },
     { "cityName":"Milwaukee",   "population":2000000 },
     { "cityName":"St. Louis",   "population":2800000 },
-    { "cityName":"Indianapolis","population":1000000 }
+    { "cityName":"Indianapolis","population":1000000 },
+    { "cityName":"Albuquerque", "population":909000 }
 ];
 
 // these are the valid connections between cities including their distances
@@ -72,6 +74,53 @@ var cityConnections = [
             {"toCity":"San Francisco","distance":380},
             {"toCity":"San Diego","distance":120},
             {"toCity":"Phoenix","distance":370}
+            ]
+    },
+    {
+        "fromCity":"Riverside",
+        "distances":[
+            {"toCity":"Los Angeles","distance":60},
+            {"toCity":"San Diego","distance":98},
+            {"toCity":"Phoenix","distance":320}
+            ]
+    },
+    {
+        "fromCity":"Phoenix",
+        "distances":[
+            {"toCity":"Riverside","distance":320},
+            {"toCity":"Los Angeles","distance":370},
+            {"toCity":"Albuquerque","distance":421}
+            ]
+    },
+    {
+        "fromCity":"Albuquerque",
+        "distances":[
+            {"toCity":"Phoenix","distance":421},
+            {"toCity":"Denver","distance":448},
+            {"toCity":"Dallas","distance":647}
+            ]  
+    },
+    {
+        "fromCity":"Dallas",
+        "distances":[
+            {"toCity":"Albuquerque","distance":647},
+            {"toCity":"Houston","distance":239},
+            {"toCity":"Kansas City","distance":508},
+            {"toCity":"San Antonio","distance":274}
+            ]
+    },
+    {
+        "fromCity":"San Francisco",
+        "distances":[
+            {"toCity":"Los Angeles","distance":380},
+            {"toCity":"Portland","distance":636}
+            ]
+    },
+    {
+        "fromCity":"Portland",
+        "distances":[
+            {"toCity":"San Francisco","distance":636},
+            {"toCity":"Seattle","distance":173}
             ]
     },
     {
@@ -200,7 +249,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
     // this indicates that the user is ready to begin the game. Now create the first audio response to prepare the game.
     'YES': function() {
-        var speechOutput = "Welcome to Train Empire. You currently have $" + this.attributes['budget'] + " to spend. ";
+        var speechOutput = "Welcome to Train Empire. You currently have $" + 
+            Math.round((this.attributes['budget'])/1000000) * 1000000 + " to spend. ";
 
         if (this.attributes['stations'].length === 0) {
             speechOutput = speechOutput + "Please get started by building your first station. Just " +
@@ -225,6 +275,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
     "AMAZON.StopIntent": function() {
         console.log("STOPINTENT");
+        this.attributes['gameOver'] = false;
         this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
     },
     // 
@@ -304,11 +355,19 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 }
                 // create the response based on logic above
                 if (validRoute) {
-                    speechOutput = fromCity + " is " + routeDistance + " miles from " + toCity + ". " +
-                        "If you would like to connect these two locations, please say " +
-                        "Add track between " + fromCity + " to " + toCity + ". ";
-                    repromptOutput = "If you would like to connect these two cities, please say " +
-                        "Add track between " + fromCity + " to " + toCity + ". ";
+                    speechOutput = fromCity + " is " + routeDistance + " miles from " + toCity + ". ";
+                    if (this.attributes['budget'] < (routeDistance * railCostPerMile)) {
+                        speechOutput = "It requires $" + (routeDistance * railCostPerMile) + " to build " +
+                            "this track, which is more than your cash on hand. Please run your trains " +
+                            "for a while longer to get the funds to do this.";
+                        repromptOutput = "If you would like to run trains, please say, Run Empire.";
+                    } else {
+                        speechOutput = speechOutput + "If you would like to connect these two locations, please say " +
+                            "Add track between " + fromCity + " to " + toCity + ". " +
+                            "You have the necessary $"+ (routeDistance * railCostPerMile) + " to build.";
+                        repromptOutput = "If you would like to connect these two cities, please say " +
+                            "Add track between " + fromCity + " to " + toCity + ". ";
+                    }
                 } else if (validFromCity) {
                     speechOutput = "No route found from " + fromCity + " to " + toCity + ".";
                     repromptOutput = "Sorry, no route found between " + fromCity + " and " + toCity +
@@ -445,17 +504,20 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             // retrieve the current connections
             var currentConnections = this.attributes['connections'];
             var currentStations = this.attributes['stations'];
+            var currentCash = this.attributes['budget'];
             
             // create an object with the slots provided by the user
             var connection = {};
                 connection.fromCity = this.event.request.intent.slots.FromCity.value;
                 connection.toCity = this.event.request.intent.slots.ToCity.value;
 
-            // validate the connection - this is in a separate function
-            var validConnection = validateConnection(currentConnections, currentStations, connection);
+            // validate the connection is valid - this is in a separate function
+            var validConnection = validateConnection(currentConnections, currentStations, connection, currentCash);
             console.log(JSON.stringify(validConnection));
 
+            // process new route
             if (validConnection.newConnection.valid) {
+                console.log("process new route");
                 var connectionDistance = validConnection.newConnection.routeDistance;
                 // these attributes are needed to calculate financials when running the trains
                     connection.trackLength = validConnection.newConnection.routeDistance;
@@ -472,10 +534,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     speechOutput = speechOutput + "That required " + connectionDistance + " miles of track. ";
                     speechOutput = speechOutput + "The base fare for this route will be $" + connection.baseFare + ". ";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
-                    speechOutput = speechOutput + "You now have $" + this.attributes['budget'] + " to spend. ";
+                    speechOutput = speechOutput + "You now have $" + Math.round((this.attributes['budget']/1000000))*1000000 + " to spend. ";
                     speechOutput = speechOutput + "If you are ready to operate your expanded empire, please say, " +
                         "Run Trains.";
-                var repromptOutput = "Are you ready to run your trains? Please say, Run Trains, " +
+                var repromptOutput = "Are you ready to run your trains? Please say, Run Empire, " +
                     "and your passengers will begin to ride.";
                 this.emit(':ask', speechOutput, repromptOutput);
             } else {
@@ -521,10 +583,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             // then create an audio response
             if (trainFinancials.profit > 0) {
                 speechOutput = speechOutput + "For the month, you turned a profit of $" + 
-                    Math.round((trainFinancials.profit/10000)) * 10000 + ". ";
+                    Math.round((trainFinancials.profit/1000000)) * 1000000 + ". ";
             } else {
                 speechOutput = speechOutput + "For the month, you lost $" + 
-                    Math.round(((-1 * trainFinancials.profit)/10000)) * 10000 + ". ";
+                    Math.round(((-1 * trainFinancials.profit)/1000000)) * 1000000 + ". ";
             }
             speechOutput = speechOutput + "<break time=\"1s\"/>"
             speechOutput = speechOutput + "Total riders were " + trainFinancials.totalRiders + ". ";
@@ -616,8 +678,12 @@ function calculateFare(connection) {
     console.log("calculating fare for " + JSON.stringify(connection));
     var routeFare = {};
     
-    if (connection.trackLength > 200) {
-        routeFare.baseAmount = 149;
+    if (connection.trackLength > 500) {
+        routeFare.baseAmount = 229;
+    } else if (connection.trackLength > 350) {
+        routeFare.baseAmount = 199;
+    } else if (connection.trackLength > 250) {
+        routeFare.baseAmount = 169;
     } else if (connection.trackLength > 150) {
         routeFare.baseAmount = 129;
     } else if (connection.trackLength > 100) {
@@ -634,7 +700,7 @@ function calculateFare(connection) {
 }
 
 // this validates that the connection between two stations is accurate
-function validateConnection(currentConnections, currentStations, connection) {
+function validateConnection(currentConnections, currentStations, connection, currentCash) {
     console.log("validate connetion function");
     console.log("cities:" + JSON.stringify(currentStations));
     console.log("connection:" + JSON.stringify(connection));
@@ -704,7 +770,18 @@ function validateConnection(currentConnections, currentStations, connection) {
         }
         if (!validRoute) {
             newConnection.valid = false;
-            newConnection.errorMessage = "These stations can't be connected as there isn't a direct path between them."
+            newConnection.errorMessage = "These stations can't be connected as there isn't a direct path between them. " +
+                "Please try again and connect two locations that you already have.";
+        }
+    }
+    
+    // validate that the user has enough money to build the route.
+    if (newConnection.valid) {
+        console.log("determine if enough budget exists");
+        if (currentCash < (newConnection.routeDistance * railCostPerMile)) {
+            newConnection.valid = false;
+            newConnection.errorMessage = "You currently don't have enough money to build this amount of track." +
+                "Please run the trains to generate money to build this route.";
         }
     }
     
