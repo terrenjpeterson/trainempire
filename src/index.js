@@ -16,7 +16,9 @@ var cities = ["New York","Los Angeles","Chicago","Dallas","Houston","Washington"
     "Detroit","Seattle","Minneapolis","San Diego","Tampa","Denver", "Baltimore",
     "Charlotte","Orlando","San Antonio","Portland",
     "Milwaukee","Indianapolis","Richmond","Wilmington",
-    "Albuquerque"];
+    "Albuquerque","New Orleans","Birmingham","Memphis",
+    "Salt Lake City","Las Vegas","Charleston","Raliegh",
+    "Jacksonville"];
 
 // this is the population between cities
 var cityPopulations = [
@@ -51,7 +53,15 @@ var cityPopulations = [
     { "cityName":"Milwaukee",   "population":2000000 },
     { "cityName":"St. Louis",   "population":2800000 },
     { "cityName":"Indianapolis","population":1000000 },
-    { "cityName":"Albuquerque", "population":909000 }
+    { "cityName":"Albuquerque", "population":909000 },
+    { "cityName":"Memphis",     "population":1300000 },
+    { "cityName":"Birmingham",  "population":1100000 },
+    { "cityName":"New Orleans", "population":1300000 },
+    { "cityName":"Salt Lake City","population":1000000 },
+    { "cityName":"Las Vegas",   "population":1000000 },
+    { "cityName":"Charleston",   "population":1000000 },
+    { "cityName":"Raleigh",   "population":1000000 },
+    { "cityName":"Jacksonville",   "population":1000000 }
 ];
 
 // these are the valid connections between cities including their distances
@@ -74,6 +84,13 @@ var cityConnections = [
             {"toCity":"San Francisco","distance":380},
             {"toCity":"San Diego","distance":120},
             {"toCity":"Phoenix","distance":370}
+            ]
+    },
+    {
+        "fromCity":"San Diego",
+        "distances":[
+            {"toCity":"Los Angeles","distance":120},
+            {"toCity":"Riverside","distance":98}
             ]
     },
     {
@@ -101,12 +118,184 @@ var cityConnections = [
             ]  
     },
     {
+        "fromCity":"Salt Lake City",
+        "distances":[
+            {"toCity":"San Francisco","distance":736},
+            {"toCity":"Las Vegas","distance":420},
+            {"toCity":"Denver","distance":520}
+            ]
+    },
+    {
+        "fromCity":"Denver",
+        "distances":[
+            {"toCity":"Albuquerque","distance":448},
+            {"toCity":"Salt Lake City","distance":520},
+            {"toCity":"Kansas City","distance":602}
+            ]
+    },
+    {
         "fromCity":"Dallas",
         "distances":[
             {"toCity":"Albuquerque","distance":647},
             {"toCity":"Houston","distance":239},
             {"toCity":"Kansas City","distance":508},
             {"toCity":"San Antonio","distance":274}
+            ]
+    },
+    {
+        "fromCity":"Houston",
+        "distances":[
+            {"toCity":"Dallas","distance":239},
+            {"toCity":"San Antonio","distance":197},
+            {"toCity":"New Orleans","distance":350}
+            ]
+    },
+    {
+        "fromCity":"Atlanta",
+        "distances":[
+            {"toCity":"Charlotte","distance":244},
+            {"toCity":"Nashville","distance":249},
+            {"toCity":"Birmingham","distance":147},
+            {"toCity":"Jacksonville","distance":345},
+            {"toCity":"Charleston","distance":306}
+            ]
+    },
+    {
+        "fromCity":"Jacksonville",
+        "distances":[
+            {"toCity":"Atlanta","distance":345},
+            {"toCity":"Tampa","distance":199},
+            {"toCity":"Orlando","distance":141},
+            {"toCity":"Charleston","distance":238}
+            ]
+    },
+    {
+        "fromCity":"Charleston",
+        "distances":[
+            {"toCity":"Atlanta","distance":306},
+            {"toCity":"Jacksonville","distance":238},
+            {"toCity":"Charlotte","distance":208}
+            ]
+    },
+    {
+        "fromCity":"Orlando",
+        "distances":[
+            {"toCity":"Jacksonville","distance":141},
+            {"toCity":"Tampa","distance":84},
+            {"toCity":"Miami","distance":236}
+            ]
+    },
+    {
+        "fromCity":"Tampa",
+        "distances":[
+            {"toCity":"Jacksonville","distance":199},
+            {"toCity":"Orlando","distance":84},
+            {"toCity":"Miami","distance":270}
+            ]
+    },
+    {
+        "fromCity":"Miami",
+        "distances":[
+            {"toCity":"Tampa","distance":270},
+            {"toCity":"Orlando","distance":236}
+            ]
+    },
+    {
+        "fromCity":"New Orleans",
+        "distances":[
+            {"toCity":"Birmingham","distance":343},
+            {"toCity":"Jacksonville","distance":546}
+            ]
+    },
+    {
+        "fromCity":"Birmingham",
+        "distances":[
+            {"toCity":"Atlanta","distance":147},
+            {"toCity":"New Orleans","distance":343},
+            {"toCity":"Memphis","distance":239},
+            {"toCity":"Nashville","distance":212}
+            ]
+    },
+    {
+        "fromCity":"Memphis",
+        "distances":[
+            {"toCity":"Birmingham","distance":239},
+            {"toCity":"St. Louis","distance":283},
+            {"toCity":"Nashville","distance":212}
+            ]
+    },
+    {
+        "fromCity":"St. Louis",
+        "distances":[
+            {"toCity":"Memphis","distance":283},
+            {"toCity":"Chicago","distance":310},
+            {"toCity":"Kansas City","distance":251},
+            {"toCity":"Indianapolis","distance":243},
+            {"toCity":"Nashville","distance":304},
+            {"toCity":"Louisville","distance":261}
+            ]
+    },
+    {
+        "fromCity":"Indianapolis",
+        "distances":[
+            {"toCity":"St. Louis","distance":243},
+            {"toCity":"Chicago","distance":180},
+            {"toCity":"Detroit","distance":287},
+            {"toCity":"Cincinnati","distance":112},
+            {"toCity":"Columbus","distance":175}
+            ]
+    },
+    {
+        "fromCity":"Detroit",
+        "distances":[
+            {"toCity":"Indianapolis","distance":287},
+            {"toCity":"Chicago","distance":280},
+            {"toCity":"Cleveland","distance":180},
+            {"toCity":"Columbus","distance":199}
+            ]
+    },
+    {
+        "fromCity":"Columbus",
+        "distances":[
+            {"toCity":"Detroit","distance":199},
+            {"toCity":"Indianapolis","distance":175},
+            {"toCity":"Louisville","distance":206},
+            {"toCity":"Cincinnati","distance":107},
+            {"toCity":"Cleveland","distance":142},
+            {"toCity":"Pittsburgh","distance":182}
+            ]
+    },
+    {
+        "fromCity":"Cincinnati",
+        "distances":[
+            {"toCity":"Columbus","distance":107},
+            {"toCity":"Indianapolis","distance":112},
+            {"toCity":"Louisville","distance":99}
+            ]
+    },
+    {
+        "fromCity":"Cleveland",
+        "distances":[
+            {"toCity":"Detroit","distance":180},
+            {"toCity":"Cleveland","distance":142},
+            {"toCity":"Pittsburgh","distance":140}
+            ]
+    },
+    {
+        "fromCity":"Nashville",
+        "distances":[
+            {"toCity":"St. Louis","distance":304},
+            {"toCity":"Birmingham","distance":212},
+            {"toCity":"Atlanta","distance":249},
+            {"toCity":"Memphis","distance":212}
+            ]
+    },
+    {
+        "fromCity":"Charlotte",
+        "distances":[
+            {"toCity":"Charleston","distance":208},
+            {"toCity":"Atlanta","distance":244},
+            {"toCity":"Raleigh","distance":150}
             ]
     },
     {
@@ -210,7 +399,13 @@ var newSessionHandlers = {
 
             var audioOutput = "Welcome to Train Empire. ";
                 audioOutput = audioOutput + "<break time=\"1s\"/>";
-                audioOutput = audioOutput + "We found an prior game in progress. Would you like to resume?";
+                audioOutput = audioOutput + "We found an prior game in progress ";
+            if (this.attributes['userName']) {
+                audioOutput = audioOutput + "under the user name of " + this.attributes['userName'] + 
+                    ". Would you like to resume?";
+            } else {
+                audioOutput = audioOutput + ". Would you like to resume?";
+            }
 
             this.handler.state = states.STARTMODE;
         }
@@ -276,7 +471,36 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     "AMAZON.StopIntent": function() {
         console.log("STOPINTENT");
         this.attributes['gameOver'] = false;
+        this.emit(':saveState', true);
         this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
+    },
+    // this function will share what the current leaderboard is
+    "Leaderboard": function() {
+        console.log("Leaderboard");
+        var speechOutput = "Check back on the leaderboard as the game does not have enough players.";
+        var repromptOutput = "To add a station, please say, Add Station, followed by the city name.";
+        this.emit(':ask', speechOutput, repromptOutput);
+    },
+    // this function will set the user name for the game.
+    "SetName": function() {
+        console.log("Set Name");
+        var speechOutput = "";
+        var repromptOutput = "";
+
+        // verify that a name was provided.
+        if (this.event.request.intent.slots.name.value) {
+            this.attributes['userName'] = this.event.request.intent.slots.name.value;
+            speechOutput = "User name recorded as " + this.event.request.intent.slots.name.value +
+                ". If you would like to continue playing, please say something like, Add a Station.";
+            repromptOutput = "To add a station, please say, Add Station, followed by the city name.";
+        } else {
+            speechOutput = "Please provide a user first name when configuring the profile. " +
+                "For example, say Set profile name to Frank.";
+            repromptOutput = "No name provided. Please provide a first name. For example, " +
+                "say Set profile name to Nicole.";
+        }
+        
+        this.emit(':ask', speechOutput, repromptOutput);
     },
     // 
     "CurrentStations": function() {
@@ -530,6 +754,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 this.attributes['connections'].push(connection);
                 // reply back to the user that the new connection has been built and ready to operate
                 var speechOutput = "Connecting " + connection.fromCity + " with " + connection.toCity + ". ";
+                    speechOutput = speechOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainWhistle.mp3\" />";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
                     speechOutput = speechOutput + "That required " + connectionDistance + " miles of track. ";
                     speechOutput = speechOutput + "The base fare for this route will be $" + connection.baseFare + ". ";
@@ -613,7 +838,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
     'SessionEndedRequest': function () {
         console.log("SESSIONENDEDREQUEST");
-        //this.attributes['endedSessionCount'] += 1;
+        this.emit(':saveState', true);
         this.emit(':tell', "Goodbye!");
     },
     'Unhandled': function() {
@@ -645,10 +870,12 @@ function runCalculations(currentConnections, currentStations) {
     console.log("calculate revenue for running the trains");
     // determine revenue based on routes
     for (var k = 0; k < currentConnections.length; k++) {
+        //console.log(JSON.stringify(currentConnections[k]));
         // find the population of the cities that hold the stations
         var toCityPopulation = 0;
         var fromCityPopulation = 0;
         for (var m = 0; m < cityPopulations.length; m++) {
+            console.log(JSON.stringify(cityPopulations[m]));
             if (cityPopulations[m].cityName.toLowerCase() === currentConnections[k].toCity.toLowerCase()) {
                 toCityPopulation = cityPopulations[m].population;
             } else if (cityPopulations[m].cityName === currentConnections[k].fromCity) {
@@ -780,7 +1007,8 @@ function validateConnection(currentConnections, currentStations, connection, cur
         console.log("determine if enough budget exists");
         if (currentCash < (newConnection.routeDistance * railCostPerMile)) {
             newConnection.valid = false;
-            newConnection.errorMessage = "You currently don't have enough money to build this amount of track." +
+            newConnection.errorMessage = "This route would cost $" + (newConnection.routeDistance * railCostPerMile) +
+                " to build, and you don't have enough cash on hand. " +
                 "Please run the trains to generate money to build this route.";
         }
     }
