@@ -3,6 +3,8 @@
 var Alexa = require("alexa-sdk");
 var appId = 'amzn1.ask.skill.c38bed75-d337-4724-b6ae-731c8f218116';
 
+// VoiceLabs ID - 54a44c80-a3f8-11a7-1b47-0e2486876586
+
 // common game variables.
 const startingBudget = 1000000000;
 const stationCost = 100000000;
@@ -449,41 +451,53 @@ var states = {
 var newSessionHandlers = {
     'NewSession': function() {
         console.log('new game started');
-	// if first time, initiate the session attributes
-        if(Object.keys(this.attributes).length === 0 || this.attributes['gameOver']) {
-            console.log('no prior session found');
-            this.attributes['budget'] = startingBudget;
-            this.attributes['month'] = 1;
-            this.attributes['gameOver'] = false;
-            this.attributes['gamesPlayed'] = 0;
-            this.attributes['stations'] = [];
-            this.attributes['connections'] = [];
+	    if(this.event.request.type === "LaunchRequest") {
+    	// if first time, initiate the session attributes
+            if(Object.keys(this.attributes).length === 0 || this.attributes['gameOver']) {
+                console.log('no prior session found');
+                this.attributes['budget'] = startingBudget;
+                this.attributes['month'] = 1;
+                this.attributes['gameOver'] = false;
+                this.attributes['gamesPlayed'] = 0;
+                this.attributes['stations'] = [];
+                this.attributes['connections'] = [];
 
-            var audioOutput = "Welcome to American Train Empire";
-                audioOutput = audioOutput + "<break time=\"1s\"/>";
-                audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
-                audioOutput = audioOutput + "Are you ready to begin?";
+                var audioOutput = "Welcome to American Train Empire";
+                    audioOutput = audioOutput + "<break time=\"1s\"/>";
+                    audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
+                    audioOutput = audioOutput + "Are you ready to begin?";
 
-            this.handler.state = states.STARTMODE;
-        } else {
-            console.log('prior session found');
-
-            var audioOutput = "Welcome to American Train Empire. ";
-                audioOutput = audioOutput + "<break time=\"1s\"/>";
-                audioOutput = audioOutput + "We found an prior game in progress ";
-            if (this.attributes['userName']) {
-                audioOutput = audioOutput + "under the user name of " + this.attributes['userName'] + 
-                    ". Would you like to resume?";
+                this.handler.state = states.STARTMODE;
             } else {
-                audioOutput = audioOutput + ". Would you like to resume?";
+                // prompt to restore to prior session
+                console.log('prior session found');
+    
+                var audioOutput = "Welcome to American Train Empire. ";
+                    audioOutput = audioOutput + "<break time=\"1s\"/>";
+                    audioOutput = audioOutput + "We found an prior game in progress ";
+                if (this.attributes['userName']) {
+                    audioOutput = audioOutput + "under the user name of " + this.attributes['userName'] + 
+                        ". Would you like to resume?";
+                } else {
+                    audioOutput = audioOutput + ". Would you like to resume?";
+                }
+
+                this.handler.state = states.STARTMODE;
             }
+	        var repromptOutput = "Say yes to start the game or no to quit.";
 
-            this.handler.state = states.STARTMODE;
-        }
+            this.emit(':ask', audioOutput, repromptOutput); 
 
-	var repromptOutput = "Say yes to start the game or no to quit.";
+	    } else {
+	        // if the game isn't started from scratch, redirect to do so.
+	        console.log("Unhandled Response: " + JSON.stringify(this.event.request));
 
-    this.emit(':ask', audioOutput, repromptOutput); 
+            var audioOutput = "I'm sorry, A game isn't yet in-progress. Please try again " +
+                "by saying, Alexa, open Train Empire";
+            var repromptOutput = "If you would like to start playing American Railroad Empire, " +
+                "please say Alexa, open Train Empire.";
+            this.emit(':ask', audioOutput, repromptOutput); 
+	    }
     },
     "AMAZON.StopIntent": function() {
       this.emit(':tell', "Goodbye!");  
@@ -494,7 +508,12 @@ var newSessionHandlers = {
     'SessionEndedRequest': function () {
         console.log('session ended!');
         this.emit(":tell", "Goodbye!");
-    }
+    },
+    'Unhandled': function() {
+        console.log("UNHANDLED");
+        var message = "I'm sorry, I didn't understand your request. Please try again.";
+        this.emit(':tell', message);
+    }     
 };
 
 var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
@@ -503,7 +522,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.emit('NewSession'); // Uses the handler in newSessionHandlers
     },
     'AMAZON.HelpIntent': function() {
-        var speechOutput = "You are playing Train Empire on Alexa. " +
+        var speechOutput = "You are playing American Train Empire on Alexa. " +
             "This is a strategy game with a goal of creating a profitable train empire that " +
             "spans the United States. " +
             "Start by adding stations, then connect them. " +
@@ -514,7 +533,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             "Set user name to Jackson. ";
         var repromptOutput = "If you would like to get started, please say something like, Build " +
             "a station in Chicago.";
-        this.emit(':ask', speechOutput, message);
+        this.emit(':ask', speechOutput, repromptOutput);
     },
 
     // this indicates that the user is ready to begin the game. Now create the first audio response to prepare the game.
@@ -668,9 +687,19 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                             "Add track between " + fromCity + " to " + toCity + ". ";
                     }
                 } else if (validFromCity) {
-                    speechOutput = "No route found from " + fromCity + " to " + toCity + ".";
+                    if (fromCity.toLowerCase() === cityConnections[i].fromCity.toLowerCase()) {
+                        console.log("two cities are valid, but don't connect:" + fromCity + " " + toCity);
+                    }
+                    speechOutput = "No route found from " + fromCity + " to " + toCity + ". " +
+                        "Please pick another route to connect from " + fromCity + ". ";
+                    //    "Your options to pick from are, ";
+                    // list the valid connections to that city.
+                    console.log(JSON.stringify(cityConnections[i].distances));
+                    //for (var j = 0; j < cityConnections[i].distances.length; j++) {
+                    //    speechOutput = speechOutput + cityConnections[i].distances[j].toCity + ", ";
+                    //}
                     repromptOutput = "Sorry, no route found between " + fromCity + " and " + toCity +
-                        ". If you would like to try another city from " + validFromCity + ", " +
+                        ". If you would like to try another city from " + fromCity + ", " +
                         "please try again.";
                 } else {
                     console.log("Doesn't match city: " + cityConnections[i].fromCity);
@@ -751,7 +780,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 // find out what cities it can be connected to
                 console.log("Number of current connections: " + cityConnections.length);
                 for (var i = 0; i < cityConnections.length; i++) {
-                    console.log("checking: " + cityConnections[i].fromCity.toLowerCase());
+                    //console.log("checking: " + cityConnections[i].fromCity.toLowerCase());
                     if (cityConnections[i].fromCity.toLowerCase() === cityName.toLowerCase()) {
                         speechOutput = speechOutput + "That station can be connected to ";
                         console.log(JSON.stringify(cityConnections[i].distances));
@@ -938,7 +967,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
     'Unhandled': function() {
         console.log("UNHANDLED from Start Game");
-        var message = 'Say yes to continue, or no to end the game.';
+        var message = "I'm sorry, I didn't understand your request. Please try again.";
         this.emit(':ask', message, message);
     }
 });
@@ -965,12 +994,10 @@ function runCalculations(currentConnections, currentStations) {
     console.log("calculate revenue for running the trains");
     // determine revenue based on routes
     for (var k = 0; k < currentConnections.length; k++) {
-        //console.log(JSON.stringify(currentConnections[k]));
         // find the population of the cities that hold the stations
         var toCityPopulation = 0;
         var fromCityPopulation = 0;
         for (var m = 0; m < cityPopulations.length; m++) {
-            console.log(JSON.stringify(cityPopulations[m]));
             if (cityPopulations[m].cityName.toLowerCase() === currentConnections[k].toCity.toLowerCase()) {
                 toCityPopulation = cityPopulations[m].population;
             } else if (cityPopulations[m].cityName === currentConnections[k].fromCity) {
