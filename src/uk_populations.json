@@ -1,0 +1,15 @@
+[
+	{ "cityName":"London","population":7074265 },
+	{ "cityName":"Birmingham","population":1020589 },
+        { "cityName":"Leeds","population": 726939 },
+        { "cityName":"Glasgow","population": 616430 },
+        { "cityName":"Sheffield","population": 530375 },
+        { "cityName":"Bradford","population": 483422 },
+        { "cityName":"Liverpool","population": 467995 },
+        { "cityName":"Edinburgh","population": 448850 },
+        { "cityName":"Manchester","population": 430818 },
+        { "cityName":"Bristol","population": 399633 },
+        { "cityName":"Kirklees","population": 388807 },
+        { "cityName":"Fife","population": 349300 },
+        { "cityName":"Wirral","population": 329179 }
+]
