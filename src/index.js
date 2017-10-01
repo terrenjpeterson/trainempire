@@ -3,8 +3,6 @@
 var Alexa = require("alexa-sdk");
 var appId = 'amzn1.ask.skill.c38bed75-d337-4724-b6ae-731c8f218116';
 
-// VoiceLabs ID - 54a44c80-a3f8-11a7-1b47-0e2486876586
-
 // common game variables.
 const startingBudget = 1000000000;
 const stationCost = 100000000;
@@ -23,8 +21,8 @@ var cityConnections = require("connections.json");
 
 // This is used by the VoiceLabs analytics
 var APP_ID = appId; 
-//var VoiceInsights =require('voice-insights-sdk'),
-//  VI_APP_TOKEN = '79091a90-09e5-11a7-2596-0eb19d13e26e';
+const VLKey ='54a44c80-a3f8-11a7-1b47-0e2486876586';
+var VoiceLabs = require("voicelabs")(VLKey);
 
 // main handler
 exports.handler = function(event, context, callback) {
@@ -50,50 +48,56 @@ var newSessionHandlers = {
         console.log('new game started');
 	    if(this.event.request.type === "LaunchRequest") {
     	// if first time, initiate the session attributes
-            if(Object.keys(this.attributes).length === 0 || this.attributes['gameOver']) {
-                console.log('no prior session found');
-                this.attributes['budget'] = startingBudget;
-                this.attributes['month'] = 1;
-                this.attributes['gameOver'] = false;
-                this.attributes['gamesPlayed'] = 0;
-                this.attributes['stations'] = [];
-                this.attributes['connections'] = [];
+            	if(Object.keys(this.attributes).length === 0 || this.attributes['gameOver']) {
+                    console.log('no prior session found');
+                    this.attributes['budget'] = startingBudget;
+                    this.attributes['month'] = 1;
+                    this.attributes['gameOver'] = false;
+                    this.attributes['gamesPlayed'] = 0;
+                    this.attributes['stations'] = [];
+                    this.attributes['connections'] = [];
 
-                var audioOutput = "Welcome to American Train Empire";
-                    audioOutput = audioOutput + "<break time=\"1s\"/>";
-                    audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
-                    audioOutput = audioOutput + "Are you ready to begin?";
+                    var audioOutput = "Welcome to American Train Empire";
+                        audioOutput = audioOutput + "<break time=\"1s\"/>";
+                        audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
+                        audioOutput = audioOutput + "Are you ready to begin?";
 
-                this.handler.state = states.STARTMODE;
-            } else {
-                // prompt to restore to prior session
-                console.log('prior session found');
+                    this.handler.state = states.STARTMODE;
+            	} else {
+                    // prompt to restore to prior session
+                    console.log('prior session found');
     
-                var audioOutput = "Welcome to American Train Empire. ";
-                    audioOutput = audioOutput + "<break time=\"1s\"/>";
-                    audioOutput = audioOutput + "We found an prior game in progress ";
-                if (this.attributes['userName']) {
-                    audioOutput = audioOutput + "under the user name of " + this.attributes['userName'] + 
-                        ". Would you like to resume?";
-                } else {
-                    audioOutput = audioOutput + ". Would you like to resume?";
-                }
+                    var audioOutput = "Welcome to American Train Empire. ";
+                    	audioOutput = audioOutput + "<break time=\"1s\"/>";
+                    	audioOutput = audioOutput + "We found an prior game in progress ";
+                    if (this.attributes['userName']) {
+                    	audioOutput = audioOutput + "under the user name of " + this.attributes['userName'] + 
+                            ". Would you like to resume?";
+                    } else {
+                        audioOutput = audioOutput + ". Would you like to resume?";
+                    }
 
-                this.handler.state = states.STARTMODE;
-            }
+                    this.handler.state = states.STARTMODE;
+            	}
+
 	        var repromptOutput = "Say yes to start the game or no to quit.";
 
-            this.emit(':ask', audioOutput, repromptOutput); 
+	    	VoiceLabs.track(this.event.session, 'Welcome Message', null, audioOutput, (error, response) => {
+                    this.emit(':ask', audioOutput, repromptOutput);
+	    	});
 
 	    } else {
 	        // if the game isn't started from scratch, redirect to do so.
 	        console.log("Unhandled Response: " + JSON.stringify(this.event.request));
 
-            var audioOutput = "I'm sorry, A game isn't yet in-progress. Please try again " +
+            	var audioOutput = "I'm sorry, A game isn't yet in-progress. Please try again " +
                 "by saying, Alexa, open Train Empire";
-            var repromptOutput = "If you would like to start playing American Railroad Empire, " +
-                "please say Alexa, open Train Empire.";
-            this.emit(':ask', audioOutput, repromptOutput); 
+            	var repromptOutput = "If you would like to start playing American Railroad Empire, " +
+                    "please say Alexa, open Train Empire.";
+
+		VoiceLabs.track(this.event.session, 'Error Welcome', null, audioOutput, (error, response) => {
+            	    this.emit(':ask', audioOutput, repromptOutput); 
+		});
 	    }
     },
     "AMAZON.StopIntent": function() {
@@ -152,7 +156,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         var repromptOutput = "We are glad you have come back. Let's get started by building another " +
             "station. Just say something like, build a station at " + cities[0] + ".";
 
-        this.emit(':ask', speechOutput, repromptOutput);
+	VoiceLabs.track(this.event.session, 'Welcome Confirm', null, speechOutput, (error, response) => {
+            this.emit(':ask', speechOutput, repromptOutput);
+	});
     },
     'NO': function() {
         console.log("NOINTENT");
@@ -163,7 +169,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         console.log("STOPINTENT");
         this.attributes['gameOver'] = false;
         this.emit(':saveState', true);
-        this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
+	VoiceLabs.track(this.event.session, 'Save Game', null, null, (error, response) => {
+            this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
+	});
     },
     // this function will share what the current leaderboard is
     "Leaderboard": function() {
