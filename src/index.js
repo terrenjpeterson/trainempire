@@ -9,6 +9,8 @@ const stationCost = 100000000;
 const railCostPerMile = 500000;
 const monthlyStationCosts = 2500000;
 const monthlyRailMilageCosts = 10000;
+const currency = "$";
+const gameName = "American Train Empire";
 
 // these are the available cities when the game initially begins
 var cities = require("cities.json");
@@ -57,7 +59,7 @@ var newSessionHandlers = {
                     this.attributes['stations'] = [];
                     this.attributes['connections'] = [];
 
-                    var audioOutput = "Welcome to American Train Empire";
+                    var audioOutput = "Welcome to " + gameName;
                         audioOutput = audioOutput + "<break time=\"1s\"/>";
                         audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
                         audioOutput = audioOutput + "Are you ready to begin?";
@@ -67,7 +69,7 @@ var newSessionHandlers = {
                     // prompt to restore to prior session
                     console.log('prior session found');
     
-                    var audioOutput = "Welcome to American Train Empire. ";
+                    var audioOutput = "Welcome to " + gameName + ". ";
                     	audioOutput = audioOutput + "<break time=\"1s\"/>";
                     	audioOutput = audioOutput + "We found an prior game in progress ";
                     if (this.attributes['userName']) {
@@ -92,7 +94,7 @@ var newSessionHandlers = {
 
             	var audioOutput = "I'm sorry, A game isn't yet in-progress. Please try again " +
                 "by saying, Alexa, open Train Empire";
-            	var repromptOutput = "If you would like to start playing American Railroad Empire, " +
+            	var repromptOutput = "If you would like to start playing " + gameName + ", " +
                     "please say Alexa, open Train Empire.";
 
 		VoiceLabs.track(this.event.session, 'Error Welcome', null, audioOutput, (error, response) => {
@@ -123,7 +125,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.emit('NewSession'); // Uses the handler in newSessionHandlers
     },
     'AMAZON.HelpIntent': function() {
-        var speechOutput = "You are playing American Train Empire on Alexa. " +
+        var speechOutput = "You are playing " + gameName + " on Alexa. " +
             "This is a strategy game with a goal of creating a profitable train empire that " +
             "spans the United States. " +
             "Start by adding stations, then connect them. " +
@@ -139,7 +141,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
     // this indicates that the user is ready to begin the game. Now create the first audio response to prepare the game.
     'YES': function() {
-        var speechOutput = "Welcome to American Train Empire. You currently have $" + 
+        var speechOutput = "Welcome to " + gameName + ". You currently have " + currency + 
             Math.round((this.attributes['budget'])/1000000) * 1000000 + " to spend. ";
 
         if (this.attributes['stations'].length === 0) {
@@ -245,7 +247,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     // this is the function invoked when the user wants to know how much money they have to spend.
     "BudgetCheck": function() {
         console.log("Budget Check");
-        var speechOutput = "You currently have " + this.attributes['budget'] + " dollars to spend. " +
+        var speechOutput = "You currently have " + this.attributes['budget'] + " " + currency + "s to spend. " +
             "If you would like to purchase a station, please do so now.";
         var repromptOutput = "If you would like to purchase a station, please name the city now.";
         this.emit(':ask', speechOutput, repromptOutput);  
@@ -280,14 +282,14 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 if (validRoute) {
                     speechOutput = fromCity + " is " + routeDistance + " miles from " + toCity + ". ";
                     if (this.attributes['budget'] < (routeDistance * railCostPerMile)) {
-                        speechOutput = "It requires $" + (routeDistance * railCostPerMile) + " to build " +
+                        speechOutput = "It requires " + currency + (routeDistance * railCostPerMile) + " to build " +
                             "this track, which is more than your cash on hand. Please run your trains " +
                             "for a while longer to get the funds to do this.";
                         repromptOutput = "If you would like to run trains, please say, Run Empire.";
                     } else {
                         speechOutput = speechOutput + "If you would like to connect these two locations, please say " +
                             "Add track between " + fromCity + " to " + toCity + ". " +
-                            "You have the necessary $"+ (routeDistance * railCostPerMile) + " to build.";
+                            "You have the necessary " + currency + (routeDistance * railCostPerMile) + " to build.";
                         repromptOutput = "If you would like to connect these two cities, please say " +
                             "Add track between " + fromCity + " to " + toCity + ". ";
                     }
@@ -380,7 +382,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     "Please build another one so you can begin connecting the cities. ";
             } else {
                 console.log("This was not the first city to be built.");
-                speechOutput = speechOutput + "That cost $" + stationCost + ". ";
+                speechOutput = speechOutput + "That cost " + currency + stationCost + ". ";
                 var recommendCity = "";
                 // find out what cities it can be connected to
                 console.log("Number of current connections: " + cityConnections.length);
@@ -412,8 +414,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             this.emit(':saveState', true);
             this.emit(':ask', speechOutput);
         } else if (lowBudget) {
-            var speechOutput = "Sorry, you only have $" + this.attributes['budget'] + " to spend, and a " +
-                "new station costs $" + stationCost + ". Please run your train empire for a few months " +
+            var speechOutput = "Sorry, you only have " + currency + this.attributes['budget'] + " to spend, and a " +
+                "new station costs " + currency + stationCost + ". Please run your train empire for a few months " +
                 "to get the necessary money to build more stations.";
             var repromptOutput = "Budget is too low. Please say, Run Empire, and gain revenue for " +
                 "your existing trains to earn money to continue to expand.";
@@ -481,9 +483,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     speechOutput = speechOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainWhistle.mp3\" />";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
                     speechOutput = speechOutput + "That required " + connectionDistance + " miles of track. ";
-                    speechOutput = speechOutput + "The base fare for this route will be $" + connection.baseFare + ". ";
+                    speechOutput = speechOutput + "The base fare for this route will be " + currency + connection.baseFare + ". ";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
-                    speechOutput = speechOutput + "You now have $" + Math.round((this.attributes['budget']/1000000))*1000000 + " to spend. ";
+                    speechOutput = speechOutput + "You now have " + currency + Math.round((this.attributes['budget']/1000000))*1000000 + " to spend. ";
                     speechOutput = speechOutput + "If you are ready to operate your expanded empire, please say, " +
                         "Run Trains.";
                 var repromptOutput = "Are you ready to run your trains? Please say, Run Empire, " +
@@ -535,22 +537,22 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             var trainFinancials = runCalculations(currentConnections, currentStations).trainFinancials;
             // then create an audio response
             if (trainFinancials.profit > 0) {
-                speechOutput = speechOutput + "For the month, you turned a profit of $" + 
+                speechOutput = speechOutput + "For the month, you turned a profit of " + currency + 
                     Math.round((trainFinancials.profit/1000000)) * 1000000 + ". ";
             } else {
-                speechOutput = speechOutput + "For the month, you lost $" + 
+                speechOutput = speechOutput + "For the month, you lost " + currency + 
                     Math.round(((-1 * trainFinancials.profit)/1000000)) * 1000000 + ". ";
             }
             speechOutput = speechOutput + "<break time=\"1s\"/>"
             speechOutput = speechOutput + "Total riders were " + trainFinancials.totalRiders + ". ";
             speechOutput = speechOutput + "<break time=\"1s\"/>"
-            speechOutput = speechOutput + "Station costs were $" + trainFinancials.stationCosts + ". ";
-            speechOutput = speechOutput + "Track costs were $" + trainFinancials.trackCosts + ". ";
-            speechOutput = speechOutput + "Net passenger revenue was $" + 
+            speechOutput = speechOutput + "Station costs were " + currency + trainFinancials.stationCosts + ". ";
+            speechOutput = speechOutput + "Track costs were " + currency + trainFinancials.trackCosts + ". ";
+            speechOutput = speechOutput + "Net passenger revenue was " + currency + 
                 Math.round((trainFinancials.passengerFares/10000)) * 10000 + ". ";
             this.attributes['budget'] += trainFinancials.profit;
             speechOutput = speechOutput + "<break time=\"1s\"/>"
-            speechOutput = speechOutput + "You now have $" + 
+            speechOutput = speechOutput + "You now have " + currency + 
                 Math.round((this.attributes['budget']/1000000)) * 1000000 + " in cash.";
             speechOutput = speechOutput + "<break time=\"1s\"/>"
 
@@ -733,7 +735,7 @@ function validateConnection(currentConnections, currentStations, connection, cur
         console.log("determine if enough budget exists");
         if (currentCash < (newConnection.routeDistance * railCostPerMile)) {
             newConnection.valid = false;
-            newConnection.errorMessage = "This route would cost $" + (newConnection.routeDistance * railCostPerMile) +
+            newConnection.errorMessage = "This route would cost " + currency + (newConnection.routeDistance * railCostPerMile) +
                 " to build, and you don't have enough cash on hand. " +
                 "Please run the trains to generate money to build this route.";
         }
