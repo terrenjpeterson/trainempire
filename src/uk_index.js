@@ -137,8 +137,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             "You can customize your game by changing your profile name. Just say something like, " +
             "Set user name to Jackson. ";
         var repromptOutput = "If you would like to get started, please say something like, Build " +
-            "a station in Chicago.";
-        this.emit(':ask', speechOutput, repromptOutput);
+            "a station in London.";
+	VoiceLabs.track(this.event.session, 'Help', null, speechOutput, (error, response) => {
+            this.emit(':ask', speechOutput, repromptOutput);
+	});
     },
 
     // this indicates that the user is ready to begin the game. Now create the first audio response to prepare the game.
@@ -202,8 +204,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             repromptOutput = "No name provided. Please provide a first name. For example, " +
                 "say Set profile name to Nicole.";
         }
-        
-        this.emit(':ask', speechOutput, repromptOutput);
+
+	VoiceLabs.track(this.event.session, 'Set Name', null, speechOutput, (error, response) => {        
+            this.emit(':ask', speechOutput, repromptOutput);
+	});
     },
     // 
     "CurrentStations": function() {
@@ -231,7 +235,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         }
         var repromptOutput = "If you would like to build a new station, please say something like, " +
             "Build a new station in " + cities[0] + ".";
-        this.emit(':ask', speechOutput, repromptOutput);    
+	
+	VoiceLabs.track(this.event.session, 'Current Stations', null, speechOutput, (error, response) => {
+            this.emit(':ask', speechOutput, repromptOutput);
+	});
     },
     // this is the function that lists out all of the available cities that stations can be built in.
     "ListCities": function() {
@@ -414,7 +421,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             var repromptOutput = "If you would like to build another station, please request " +
                 "that next. ";
             this.emit(':saveState', true);
-            this.emit(':ask', speechOutput);
+	    VoiceLabs.track(this.event.session, 'Build Station', cityName, speechOutput, (error, response) => {
+            	this.emit(':ask', speechOutput);
+	    });
         } else if (lowBudget) {
             var speechOutput = "Sorry, you only have " + currency + this.attributes['budget'] + " to spend, and a " +
                 "new station costs " + currency + stationCost + ". Please run your train empire for a few months " +
@@ -493,7 +502,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 var repromptOutput = "Are you ready to run your trains? Please say, Run Empire, " +
                     "and your passengers will begin to ride.";
                 this.emit(':saveState', true);
-                this.emit(':ask', speechOutput, repromptOutput);
+		VoiceLabs.track(this.event.session, 'Connect City', connection.fromCity, speechOutput, (error, response) => {
+                    this.emit(':ask', speechOutput, repromptOutput);
+		});
             } else {
                 // respond back with the error message to the user
                 var speechOutput = validConnection.newConnection.errorMessage;
@@ -567,17 +578,23 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             console.log(JSON.stringify(trainFinancials));
         }
         this.emit(':saveState', true);
-        this.emit(':ask', speechOutput, repromptOutput);
+	VoiceLabs.track(this.event.session, 'Run Empire', null, speechOutput, (error, response) => {
+            this.emit(':ask', speechOutput, repromptOutput);
+	});
     },
     'SessionEndedRequest': function () {
         console.log("SESSIONENDEDREQUEST");
         this.emit(':saveState', true);
-        this.emit(':tell', "Goodbye!");
+	VoiceLabs.track(this.event.session, 'End Session', null, null, (error, response) => {
+            this.emit(':tell', "Goodbye!");
+	});
     },
     'Unhandled': function() {
         console.log("UNHANDLED from Start Game");
         var message = "I'm sorry, I didn't understand your request. Please try again.";
-        this.emit(':ask', message, message);
+	VoiceLabs.track(this.event.session, 'Unhandled', null, message, (error, response) => {
+            this.emit(':ask', message, message);
+	});
     }
 });
 
