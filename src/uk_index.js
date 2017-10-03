@@ -94,10 +94,10 @@ var newSessionHandlers = {
 	        // if the game isn't started from scratch, redirect to do so.
 	        console.log("Unhandled Response: " + JSON.stringify(this.event.request));
 
-            	var audioOutput = "I'm sorry, A game isn't yet in-progress. Please try again " +
-                "by saying, Alexa, open Train Empire";
+            	var audioOutput = "I'm sorry, A game isn't yet in-progress and this feature is reserved " +
+		    "for within a game. Please say yes if you would like to start playing " + gameName + ".";
             	var repromptOutput = "If you would like to start playing " + gameName + ", " +
-                    "please say Alexa, open Train Empire.";
+                    "please say yes.";
 
 		VoiceLabs.track(this.event.session, 'Error Welcome', null, audioOutput, (error, response) => {
             	    this.emit(':ask', audioOutput, repromptOutput); 
@@ -171,6 +171,34 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.attributes['gameOver'] = true;
         this.emit(':tell', 'Ok, I will delete this game and you can start over with a new game.');
     },
+    // this function handles the request to start the game over
+    "AMAZON.StartOverIntent": function() {
+	console.log("Start Over Request");
+                    
+	this.attributes['budget'] = startingBudget;
+	this.attributes['month'] = 1;
+	this.attributes['gameOver'] = false;
+	this.attributes['gamesPlayed'] = 0;
+	this.attributes['stations'] = [];
+	this.attributes['connections'] = [];
+
+	var audioOutput = "Restarting " + gameName;
+	    audioOutput = audioOutput + "<break time=\"1s\"/>";
+	    audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
+	    audioOutput = audioOutput + "Are you ready to begin?";
+
+	var repromptOutput = "You have just restarted " + gameName + ". Are you ready to begin?"; 
+
+	VoiceLabs.track(this.event.session, 'Restart Game', null, null, (error, response) => {
+	    this.emit(':ask', audioOutput, repromptOutput);
+	});
+    },
+    "AMAZON.CancelIntent": function() {
+	console.log("Cancel Intent");
+        VoiceLabs.track(this.event.session, 'Cancel Request', null, null, (error, response) => {
+            this.emit(':tell', "Thanks for playing. The game is no longer in-progress.");
+        });
+    },
     "AMAZON.StopIntent": function() {
         console.log("STOPINTENT");
         this.attributes['gameOver'] = false;
@@ -227,8 +255,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     this.attributes['stations'][1] + ".";
             }
         } else if (this.attributes['stations'].length === 1) {
-            speechOutput = speechOutput + "If you are ready to build another station, please say something like, " +
-                "Build a station in " + cities[0] + ".";
+            speechOutput = "You currently have one station built in " + this.attributes['stations'][0] + ". " +
+		"Now lets build another station so you can connect it, and begin your train empire.";
         } else {
             speechOutput = "Sorry, no stations have been built so far. To get started, please build " +
                 "your first station.";
@@ -394,7 +422,6 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 speechOutput = speechOutput + "That cost " + currency + stationCost + ". ";
                 var recommendCity = "";
                 // find out what cities it can be connected to
-                console.log("Number of current connections: " + cityConnections.length);
                 for (var i = 0; i < cityConnections.length; i++) {
                     //console.log("checking: " + cityConnections[i].fromCity.toLowerCase());
                     if (cityConnections[i].fromCity.toLowerCase() === cityName.toLowerCase()) {
@@ -412,17 +439,18 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     }
                 }
                 if (recommendCity) {
+		    console.log("Potential cities provided to connect to.");
                     speechOutput = speechOutput + "Please say, connect " + cityName + " to " + recommendCity + ". ";
                 } else {
-                    speechOutput = speechOutput + "Please build another station in one of these locations " +
-                        "so you can connect this to. ";
+		    console.log("No valid city combinations to connect to.");
+                    speechOutput = speechOutput + "Please build another station so you can connect " + cityName + " to it. ";
                 }
             }
             var repromptOutput = "If you would like to build another station, please request " +
                 "that next. ";
             this.emit(':saveState', true);
 	    VoiceLabs.track(this.event.session, 'Build Station', cityName, speechOutput, (error, response) => {
-            	this.emit(':ask', speechOutput);
+            	this.emit(':ask', speechOutput, repromptOutput);
 	    });
         } else if (lowBudget) {
             var speechOutput = "Sorry, you only have " + currency + this.attributes['budget'] + " to spend, and a " +
