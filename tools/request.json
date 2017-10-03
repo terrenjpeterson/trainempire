@@ -1,0 +1,94 @@
+{
+  "session": {
+    "new": false,
+    "sessionId": "SessionId.c91894fc-d6da-461a-b2c5-afb81de1bd07",
+    "application": {
+      "applicationId": "amzn1.ask.skill.c38bed75-d337-4724-b6ae-731c8f218116"
+    },
+    "attributes": {
+      "month": 16,
+      "gamesPlayed": 0,
+      "STATE": "_STARTMODE",
+      "stations": [
+        "riverside",
+        "San Francisco",
+        "Los Angeles",
+        "Portland",
+        "Seattle",
+        "Albuquerque",
+        "phoenix"
+      ],
+      "gameOver": false,
+      "userName": "taryn",
+      "connections": [
+        {
+          "toCity": "Los Angeles",
+          "baseFare": 199,
+          "trackLength": 380,
+          "fromCity": "San Francisco"
+        },
+        {
+          "toCity": "riverside",
+          "baseFare": 49,
+          "trackLength": 60,
+          "fromCity": "Los Angeles"
+        },
+        {
+          "toCity": "San Francisco",
+          "baseFare": 229,
+          "trackLength": 636,
+          "fromCity": "Portland"
+        },
+        {
+          "toCity": "Seattle",
+          "baseFare": 129,
+          "trackLength": 173,
+          "fromCity": "Portland"
+        },
+        {
+          "toCity": "Los Angeles",
+          "baseFare": 49,
+          "trackLength": 60,
+          "fromCity": "riverside"
+        },
+        {
+          "toCity": "Albuquerque",
+          "baseFare": 199,
+          "trackLength": 421,
+          "fromCity": "phoenix"
+        }
+      ],
+      "budget": 37980000
+    },
+    "user": {
+      "userId": "amzn1.ask.account.AHKPADSVRKM52PBQIV3UW75G7W7EOOLD6Q7R6JZS56YVPHNU43NWT5FZDLGK2ERTE4OWASQX6ULL2ARHEQXIJ4XBH7Z55YJYCGXYRAD4VW4UFGQSMQETLA74AO2AQZVYRXOZGGDVQRTTNXPQROZLFOI2VNJKTLZGBMZINNM36PWHRTBY4PAKPAVPFBDHKCXXYARQJWLQOBNUCTI"
+    }
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "EdwRequestId.7938134e-5e04-499a-b35b-9fe271bdd8fb",
+    "intent": {
+      "name": "RunTrains",
+      "slots": {}
+    },
+    "locale": "en-US",
+    "timestamp": "2017-09-24T21:52:42Z"
+  },
+  "context": {
+    "AudioPlayer": {
+      "playerActivity": "IDLE"
+    },
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.c38bed75-d337-4724-b6ae-731c8f218116"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.AHKPADSVRKM52PBQIV3UW75G7W7EOOLD6Q7R6JZS56YVPHNU43NWT5FZDLGK2ERTE4OWASQX6ULL2ARHEQXIJ4XBH7Z55YJYCGXYRAD4VW4UFGQSMQETLA74AO2AQZVYRXOZGGDVQRTTNXPQROZLFOI2VNJKTLZGBMZINNM36PWHRTBY4PAKPAVPFBDHKCXXYARQJWLQOBNUCTI"
+      },
+      "device": {
+        "supportedInterfaces": {}
+      }
+    }
+  },
+  "version": "1.0"
+}
