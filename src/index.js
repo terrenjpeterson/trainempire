@@ -11,6 +11,8 @@ const monthlyStationCosts = 2500000;
 const monthlyRailMilageCosts = 10000;
 const currency = "$";
 const gameName = "American Train Empire";
+const geography = "United States";
+const trackMeasure = "miles";
 
 // these are the available cities when the game initially begins
 var cities = require("cities.json");
@@ -127,7 +129,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.HelpIntent': function() {
         var speechOutput = "You are playing " + gameName + " on Alexa. " +
             "This is a strategy game with a goal of creating a profitable train empire that " +
-            "spans the United States. " +
+            "spans " + geography + ". " +
             "Start by adding stations, then connect them. " +
             "Once you have cities connected, riders will begin to join, and you will start " +
             "to earn money to build more stations and trains. " +
@@ -166,6 +168,34 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         console.log("NOINTENT");
         this.attributes['gameOver'] = true;
         this.emit(':tell', 'Ok, I will delete this game and you can start over with a new game.');
+    },
+    // this function handles the request to start the game over
+    "AMAZON.StartOverIntent": function() {
+	console.log("Start Over Request");
+                    
+	this.attributes['budget'] = startingBudget;
+	this.attributes['month'] = 1;
+	this.attributes['gameOver'] = false;
+	this.attributes['gamesPlayed'] = 0;
+	this.attributes['stations'] = [];
+	this.attributes['connections'] = [];
+
+	var audioOutput = "Restarting " + gameName;
+	    audioOutput = audioOutput + "<break time=\"1s\"/>";
+	    audioOutput = audioOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainSoundIntro.mp3\" />";
+	    audioOutput = audioOutput + "Are you ready to begin?";
+
+	var repromptOutput = "You have just restarted " + gameName + ". Are you ready to begin?"; 
+
+	VoiceLabs.track(this.event.session, 'Restart Game', null, null, (error, response) => {
+	    this.emit(':ask', audioOutput, repromptOutput);
+	});
+    },
+    "AMAZON.CancelIntent": function() {
+	console.log("Cancel Intent");
+        VoiceLabs.track(this.event.session, 'Cancel Request', null, null, (error, response) => {
+            this.emit(':tell', "Thanks for playing. The game is no longer in-progress.");
+        });
     },
     "AMAZON.StopIntent": function() {
         console.log("STOPINTENT");
@@ -247,7 +277,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     // this is the function invoked when the user wants to know how much money they have to spend.
     "BudgetCheck": function() {
         console.log("Budget Check");
-        var speechOutput = "You currently have " + this.attributes['budget'] + " " + currency + "s to spend. " +
+        var speechOutput = "You currently have " + currency + this.attributes['budget'] + " to spend. " +
             "If you would like to purchase a station, please do so now.";
         var repromptOutput = "If you would like to purchase a station, please name the city now.";
         this.emit(':ask', speechOutput, repromptOutput);  
@@ -280,7 +310,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 }
                 // create the response based on logic above
                 if (validRoute) {
-                    speechOutput = fromCity + " is " + routeDistance + " miles from " + toCity + ". ";
+                    speechOutput = fromCity + " is " + routeDistance + " " + trackMeasure + " from " + toCity + ". ";
                     if (this.attributes['budget'] < (routeDistance * railCostPerMile)) {
                         speechOutput = "It requires " + currency + (routeDistance * railCostPerMile) + " to build " +
                             "this track, which is more than your cash on hand. Please run your trains " +
@@ -412,7 +442,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             var repromptOutput = "If you would like to build another station, please request " +
                 "that next. ";
             this.emit(':saveState', true);
-            this.emit(':ask', speechOutput);
+            this.emit(':ask', speechOutput, repromptOutput);
         } else if (lowBudget) {
             var speechOutput = "Sorry, you only have " + currency + this.attributes['budget'] + " to spend, and a " +
                 "new station costs " + currency + stationCost + ". Please run your train empire for a few months " +
@@ -482,7 +512,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 var speechOutput = "Connecting " + connection.fromCity + " with " + connection.toCity + ". ";
                     speechOutput = speechOutput + "<audio src=\"https://s3.amazonaws.com/trainempire/sounds/trainWhistle.mp3\" />";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
-                    speechOutput = speechOutput + "That required " + connectionDistance + " miles of track. ";
+                    speechOutput = speechOutput + "That required " + connectionDistance + " " + trackMeasure + " of track. ";
                     speechOutput = speechOutput + "The base fare for this route will be " + currency + connection.baseFare + ". ";
                     speechOutput = speechOutput + "<break time=\"1s\"/>"
                     speechOutput = speechOutput + "You now have " + currency + Math.round((this.attributes['budget']/1000000))*1000000 + " to spend. ";
