@@ -51,6 +51,7 @@ var newSessionHandlers = {
     'NewSession': function() {
         console.log('new game started');
 	    if(this.event.request.type === "LaunchRequest") {
+		var currDate = new Date().toString();
     	// if first time, initiate the session attributes
             	if(Object.keys(this.attributes).length === 0 || this.attributes['gameOver']) {
                     console.log('no prior session found');
@@ -60,6 +61,7 @@ var newSessionHandlers = {
                     this.attributes['gamesPlayed'] = 0;
                     this.attributes['stations'] = [];
                     this.attributes['connections'] = [];
+		    this.attributes['startDate'] = [currDate];
 
                     var audioOutput = "Welcome to " + gameName;
                         audioOutput = audioOutput + "<break time=\"1s\"/>";
@@ -70,6 +72,8 @@ var newSessionHandlers = {
             	} else {
                     // prompt to restore to prior session
                     console.log('prior session found');
+
+		    this.attributes['lastDate'] = [currDate];
     
                     var audioOutput = "Welcome to " + gameName + ". ";
                     	audioOutput = audioOutput + "<break time=\"1s\"/>";
@@ -200,10 +204,11 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         });
     },
     "AMAZON.StopIntent": function() {
-        console.log("STOPINTENT");
+        console.log("Stop intent invoked - saving game.");
         this.attributes['gameOver'] = false;
         this.emit(':saveState', true);
 	VoiceLabs.track(this.event.session, 'Save Game', null, null, (error, response) => {
+	    console.log('voice insights logged:' + JSON.stringify(response));
             this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
 	});
     },
