@@ -242,7 +242,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             this.emit(':ask', speechOutput, repromptOutput);
 	});
     },
-    // 
+    // this function gets invoked to list all of the current stations within the current game.
     "CurrentStations": function() {
         console.log("List current stations.");
         var speechOutput = "";
@@ -264,7 +264,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 		"Now lets build another station so you can connect it, and begin your train empire.";
         } else {
             speechOutput = "Sorry, no stations have been built so far. To get started, please build " +
-                "your first station.";
+                "your first station. If you would like a list of cities to build the station in, " +
+		"please say, List Cities to build stations.";
         }
         var repromptOutput = "If you would like to build a new station, please say something like, " +
             "Build a new station in " + cities[0] + ".";
@@ -393,6 +394,9 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                     validStation = true;
                 }
             }
+	    if (!validStation) {
+		console.log(cities[i] + " is not a valid city to build a station in.");
+	    }
         }
         // validate that the station hasn't already been built
         if (validStation) {
@@ -470,16 +474,16 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 "has a station, please pick a different city to build a station in. ";
             var repromptOutput = "You have already built a station in this city. Please " +
                 "select a different one to build in. For a full list of cities, please " +
-                "say List Cities.";
+                "say List Cities to build stations.";
             this.emit(':ask', speechOutput, repromptOutput);
         } else if (this.event.request.intent.slots.CityName.value) {
             // this logic is invoked when the city name wasn't provided
             var speechOutput = this.event.request.intent.slots.CityName.value + " isn't a city " +
                 "that you can build a station in. " +
-                "For example, say Build a station in " + cities[0] + ".";
+		"For a complete list of cities that can build a station in, please say List Cities to build stations.";
             var repromptOutput = "You did not provide a valid city name to build the station in. Please say " +
                 "something like, Build a Station in " + cities[0] + ". For a complete list of " +
-                "cities, say List Cities.";
+                "cities, say List Cities to build stations.";
             this.emit(':ask', speechOutput, repromptOutput);
         } else {
             // this logic is invoked when the city name wasn't provided
@@ -487,7 +491,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 "For example, say Build a station in " + cities[0] + ".";
             var repromptOutput = "You did not provide a city to build the station in. Please say " +
                 "something like, Build a Station in " + cities[0] + ". For a complete list of " +
-                "cities, say List Cities.";
+                "cities, say List Cities to build stations.";
             this.emit(':ask', speechOutput, repromptOutput);
         }
     },
