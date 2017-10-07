@@ -115,8 +115,8 @@ var newSessionHandlers = {
       this.emit(':tell', "Goodbye!");  
     },
     'SessionEndedRequest': function () {
-        console.log('session ended!');
-        this.emit(":tell", "Goodbye!");
+        console.log('session ended from main!');
+        this.emit(':saveState', true);
     },
     'Unhandled': function() {
         console.log("UNHANDLED");
@@ -206,7 +206,6 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     "AMAZON.StopIntent": function() {
         console.log("Stop intent invoked - saving game.");
         this.attributes['gameOver'] = false;
-        this.emit(':saveState', true);
 	VoiceLabs.track(this.event.session, 'Save Game', null, null, (error, response) => {
 	    console.log('voice insights logged:' + JSON.stringify(response));
             this.emit(':tell', "Thanks for playing. The game will be saved if you would like to resume at a later time.");  
@@ -457,7 +456,6 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             }
             var repromptOutput = "If you would like to build another station, please request " +
                 "that next. ";
-            this.emit(':saveState', true);
 	    VoiceLabs.track(this.event.session, 'Build Station', cityName, speechOutput, (error, response) => {
             	this.emit(':ask', speechOutput, repromptOutput);
 	    });
@@ -538,7 +536,6 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                         "Run Trains.";
                 var repromptOutput = "Are you ready to run your trains? Please say, Run Empire, " +
                     "and your passengers will begin to ride.";
-                this.emit(':saveState', true);
 		VoiceLabs.track(this.event.session, 'Connect City', connection.fromCity, speechOutput, (error, response) => {
                     this.emit(':ask', speechOutput, repromptOutput);
 		});
@@ -614,16 +611,14 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             }
             console.log(JSON.stringify(trainFinancials));
         }
-        this.emit(':saveState', true);
 	VoiceLabs.track(this.event.session, 'Run Empire', null, speechOutput, (error, response) => {
             this.emit(':ask', speechOutput, repromptOutput);
 	});
     },
     'SessionEndedRequest': function () {
         console.log("SESSIONENDEDREQUEST");
-        this.emit(':saveState', true);
 	VoiceLabs.track(this.event.session, 'End Session', null, null, (error, response) => {
-            this.emit(':tell', "Goodbye!");
+            this.emit(':saveState', true);
 	});
     },
     'Unhandled': function() {
