@@ -383,7 +383,25 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         var validStation = false;
         var duplicateStation = false;
         var lowBudget = false;
-        
+
+	// scrub city name given how Alexa interprets some city names
+	if (this.event.request.intent.slots.CityName.value) {
+	    if (this.event.request.intent.slots.CityName.toLowerCase() === "new castle") {
+		console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
+		this.event.request.intent.slots.CityName = "New Castle";
+	    } else if (this.event.request.intent.slots.CityName.toLowerCase() === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
+        	this.event.request.intent.slots.CityName = "Fife";
+            } else if (this.event.request.intent.slots.CityName.toLowerCase() === "kirk" || 
+		       this.event.request.intent.slots.CityName.toLowerCase() === "cookley") { 
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
+                this.event.request.intent.slots.CityName = "Kirklees";
+            } else if (this.event.request.intent.slots.CityName.toLowerCase() === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
+                this.event.request.intent.slots.CityName = "Farnsworth";
+	    }
+	}
+
         // validate that the city name is valid to build a station in
         if (this.event.request.intent.slots.CityName.value) {
             console.log("validate city name: " + this.event.request.intent.slots.CityName.value);
@@ -394,7 +412,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 }
             }
 	    if (!validStation) {
-		console.log(cities[i] + " is not a valid city to build a station in.");
+		console.log(this.event.request.intent.slots.CityName + " is not a valid city to build a station in.");
 	    }
         }
         // validate that the station hasn't already been built
@@ -496,6 +514,42 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     // this function gets called when connecting track between two cities
     "ConnectCities": function() {
         console.log("Connect Two Cities");
+
+        // scrub city name given how Alexa interprets some city names
+        if (this.event.request.intent.slots.FromCity.value) {
+            if (this.event.request.intent.slots.FromCity.toLowerCase() === "new castle") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
+                this.event.request.intent.slots.FromCity = "New Castle";
+            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
+                this.event.request.intent.slots.FromCity = "Fife";
+            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "kirk" ||  
+                       this.event.request.intent.slots.FromCity.toLowerCase() === "cookley") { 
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
+                this.event.request.intent.slots.FromCity = "Kirklees";
+            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
+                this.event.request.intent.slots.FromCity = "Farnsworth";
+            }
+        }
+
+        if (this.event.request.intent.slots.ToCity.value) {
+            if (this.event.request.intent.slots.ToCity.toLowerCase() === "new castle") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
+                this.event.request.intent.slots.ToCity = "New Castle";
+            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
+                this.event.request.intent.slots.ToCity = "Fife";
+            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "kirk" ||
+                       this.event.request.intent.slots.ToCity.toLowerCase() === "cookley") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
+                this.event.request.intent.slots.ToCity = "Kirklees";
+            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
+                this.event.request.intent.slots.ToCity = "Farnsworth";
+            }
+        }
+
         if (this.event.request.intent.slots.FromCity.value && this.event.request.intent.slots.ToCity.value) {
             // retrieve the current connections
             var currentConnections = this.attributes['connections'];
