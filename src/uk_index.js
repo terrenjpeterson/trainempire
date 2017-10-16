@@ -386,19 +386,19 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
 	// scrub city name given how Alexa interprets some city names
 	if (this.event.request.intent.slots.CityName.value) {
-	    if (this.event.request.intent.slots.CityName.toLowerCase() === "new castle") {
-		console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
-		this.event.request.intent.slots.CityName = "New Castle";
-	    } else if (this.event.request.intent.slots.CityName.toLowerCase() === "fyffe") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
-        	this.event.request.intent.slots.CityName = "Fife";
-            } else if (this.event.request.intent.slots.CityName.toLowerCase() === "kirk" || 
-		       this.event.request.intent.slots.CityName.toLowerCase() === "cookley") { 
-                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
-                this.event.request.intent.slots.CityName = "Kirklees";
-            } else if (this.event.request.intent.slots.CityName.toLowerCase() === "farnworth") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName);
-                this.event.request.intent.slots.CityName = "Farnsworth";
+	    if (this.event.request.intent.slots.CityName.value === "new castle") {
+		console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
+		this.event.request.intent.slots.CityName.value = "New Castle";
+	    } else if (this.event.request.intent.slots.CityName.value === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
+        	this.event.request.intent.slots.CityName.value = "Fife";
+            } else if (this.event.request.intent.slots.CityName.value === "kirk" || 
+		       this.event.request.intent.slots.CityName.value === "cookley") { 
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
+                this.event.request.intent.slots.CityName.value = "Kirklees";
+            } else if (this.event.request.intent.slots.CityName.value === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
+                this.event.request.intent.slots.CityName.value = "Farnsworth";
 	    }
 	}
 
@@ -517,36 +517,36 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
         // scrub city name given how Alexa interprets some city names
         if (this.event.request.intent.slots.FromCity.value) {
-            if (this.event.request.intent.slots.FromCity.toLowerCase() === "new castle") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
-                this.event.request.intent.slots.FromCity = "New Castle";
-            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "fyffe") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
-                this.event.request.intent.slots.FromCity = "Fife";
-            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "kirk" ||  
-                       this.event.request.intent.slots.FromCity.toLowerCase() === "cookley") { 
-                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
-                this.event.request.intent.slots.FromCity = "Kirklees";
-            } else if (this.event.request.intent.slots.FromCity.toLowerCase() === "farnworth") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity);
-                this.event.request.intent.slots.FromCity = "Farnsworth";
+            if (this.event.request.intent.slots.FromCity.value === "new castle") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity.value);
+                this.event.request.intent.slots.FromCity.value = "New Castle";
+            } else if (this.event.request.intent.slots.FromCity.value === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity.value);
+                this.event.request.intent.slots.FromCity.value = "Fife";
+            } else if (this.event.request.intent.slots.FromCity.value === "kirk" ||  
+                       this.event.request.intent.slots.FromCity.value === "cookley") { 
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity.value);
+                this.event.request.intent.slots.FromCity.value = "Kirklees";
+            } else if (this.event.request.intent.slots.FromCity.value === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.FromCity.value);
+                this.event.request.intent.slots.FromCity.value = "Farnsworth";
             }
         }
 
         if (this.event.request.intent.slots.ToCity.value) {
-            if (this.event.request.intent.slots.ToCity.toLowerCase() === "new castle") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
-                this.event.request.intent.slots.ToCity = "New Castle";
-            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "fyffe") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
-                this.event.request.intent.slots.ToCity = "Fife";
-            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "kirk" ||
-                       this.event.request.intent.slots.ToCity.toLowerCase() === "cookley") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
-                this.event.request.intent.slots.ToCity = "Kirklees";
-            } else if (this.event.request.intent.slots.ToCity.toLowerCase() === "farnworth") {
-                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity);
-                this.event.request.intent.slots.ToCity = "Farnsworth";
+            if (this.event.request.intent.slots.ToCity.value === "new castle") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity.value);
+                this.event.request.intent.slots.ToCity.value = "New Castle";
+            } else if (this.event.request.intent.slots.ToCity.value === "fyffe") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity.value);
+                this.event.request.intent.slots.ToCity.value = "Fife";
+            } else if (this.event.request.intent.slots.ToCity.value === "kirk" ||
+                       this.event.request.intent.slots.ToCity.value === "cookley") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity.value);
+                this.event.request.intent.slots.ToCity.value = "Kirklees";
+            } else if (this.event.request.intent.slots.ToCity.value === "farnworth") {
+                console.log("Corrected spelling of " + this.event.request.intent.slots.ToCity.value);
+                this.event.request.intent.slots.ToCity.value = "Farnsworth";
             }
         }
 
