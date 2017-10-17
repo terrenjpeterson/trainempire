@@ -393,12 +393,18 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
         	this.event.request.intent.slots.CityName.value = "Fife";
             } else if (this.event.request.intent.slots.CityName.value === "kirk" || 
+                       this.event.request.intent.slots.CityName.value === "kirklin" ||
 		       this.event.request.intent.slots.CityName.value === "cookley") { 
                 console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
                 this.event.request.intent.slots.CityName.value = "Kirklees";
             } else if (this.event.request.intent.slots.CityName.value === "farnworth") {
                 console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
                 this.event.request.intent.slots.CityName.value = "Farnsworth";
+            } else if (this.event.request.intent.slots.CityName.value === "whitwell" ||
+		       this.event.request.intent.slots.CityName.value === "whitharral" ||
+                       this.event.request.intent.slots.CityName.value === "worland") { 
+                console.log("Corrected spelling of " + this.event.request.intent.slots.CityName.value);
+                this.event.request.intent.slots.CityName.value = "Wirral";
 	    }
 	}
 
