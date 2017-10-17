@@ -23,6 +23,9 @@ var cityPopulations = require("uk_populations.json");
 // these are the valid connections between cities including their distances
 var cityConnections = require("uk_connections.json");
 
+// these are the high scores recorded for the game
+var highScores = require("uk_top_scores.json");
+
 // This is used by the VoiceLabs analytics
 var APP_ID = appId; 
 const VLKey ='d1a801e0-a6f0-11a7-1b47-0e2486876586';
@@ -214,7 +217,26 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     // this function will share what the current leaderboard is
     "Leaderboard": function() {
         console.log("Leaderboard");
-        var speechOutput = "Check back on the leaderboard as the game does not have enough players.";
+
+	var speechOutput = "Here is the current leaderboard of top players. ";
+
+	for (var i = 0; i < highScores.length; i++) {
+	    // calculate net worth based on cash on hand and what is in the bank
+	    var netWorth = highScores[i].cashReserve + (highScores[i].numberStations * stationCost) + (highScores[i].numberConnections * 100 * railCostPerMile);
+	        netWorth = Math.round((netWorth/1000000)) * 1000000; 
+	    console.log("Game Length: " + highScores[i].numberMonths);
+	    console.log("Net Worth: " + netWorth);
+	    if (highScores[i].userName) {
+		console.log("User Name: " + highScores[i].userName);
+		speechOutput = speechOutput + "User Name: " + highScores[i].userName + ". ";
+	    } else {
+		speechOutput = speechOutput + "No name provided. ";
+	    }
+	    speechOutput = speechOutput + "Net worth is " + netWorth + " after " + highScores[i].numberMonths + " rounds. ";
+	}
+
+	    speechOutput = speechOutput + "To customize your name, please say something like, Update user name to Thomas.";
+
         var repromptOutput = "To add a station, please say, Add Station, followed by the city name.";
         this.emit(':ask', speechOutput, repromptOutput);
     },

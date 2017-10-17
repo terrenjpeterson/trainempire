@@ -6,12 +6,13 @@
 cd ../src
 
 # create zip file with all of the necessary packages
-zip -r uk_build.zip uk_index.js uk_cities.json uk_populations.json uk_package.json uk_connections.json node_modules/
+zip -r uk_build.zip uk_index.js uk_cities.json uk_populations.json uk_package.json uk_connections.json uk_top_scores.json node_modules/
 
 # copy some of the files to a staging bucket in case need for research
 aws s3 cp uk_index.js s3://trainempire/binaries/
 aws s3 cp uk_build.zip s3://trainempire/binaries/
 aws s3 cp uk_connections.json s3://trainempire/binaries/
+aws s3 cp uk_top_scores.json s3://trainempire/binaries/
 
 # cleanup temporary file
 rm uk_build.zip
