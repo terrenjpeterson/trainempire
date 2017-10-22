@@ -13,5 +13,12 @@
         { "cityName":"Fife",		"population": 349300 },
         { "cityName":"Wirral",		"population": 329179 },
 	{ "cityName":"Brighton",	"population": 769000 },
-	{ "cityName":"Newcastle",	"population": 1599000 }
+	{ "cityName":"Newcastle",	"population": 1599000 },
+	{ "cityName":"Cambridge",	"population": 158000 },
+	{ "cityName":"Oxford",		"population": 171000 },
+	{ "cityName":"Nottingham",	"population": 730000 },
+	{ "cityName":"Redding",		"population": 318000 },
+	{ "cityName":"Plymouth",	"population": 260000 },
+	{ "cityName":"Coventry",	"population": 360000 },
+	{ "cityName":"Cardiff",		"population": 447000 }
 ]

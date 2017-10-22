@@ -17,6 +17,9 @@ const trackMeasure = "kilometers";
 // these are the available cities when the game initially begins
 var cities = require("uk_cities.json");
 
+// these are the added cities when you have reached the second level of the game
+var extraCities = ["Cambridge", "Oxford", "Nottingham", "Reading", "Plymouth", "Coventry", "Cardiff"];
+
 // this is the population between cities
 var cityPopulations = require("uk_populations.json");
 
@@ -78,7 +81,7 @@ var newSessionHandlers = {
 
 		    this.attributes['lastDate'] = [currDate];
     
-                    var audioOutput = "Welcome to " + gameName + ". ";
+                    var audioOutput = "Welcome back to " + gameName + ". ";
                     	audioOutput = audioOutput + "<break time=\"1s\"/>";
                     	audioOutput = audioOutput + "We found an prior game in progress ";
                     if (this.attributes['userName']) {
@@ -141,6 +144,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             "Once you have cities connected, riders will begin to join, and you will start " +
             "to earn money to build more stations and trains. " +
             "Common voice commands to use are, Build Station, Connect Stations, and Run Empire. " +
+	    "If you build enough stations and connect them, you may reach the games high scores. " +
+	    "Please say, Who is on the leaderboard? to find out about the biggest empires. " +
             "You can customize your game by changing your profile name. Just say something like, " +
             "Set user name to Jackson. ";
         var repromptOutput = "If you would like to get started, please say something like, Build " +
@@ -232,7 +237,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 	    } else {
 		speechOutput = speechOutput + "No name provided. ";
 	    }
-	    speechOutput = speechOutput + "Net worth is " + netWorth + " after " + highScores[i].numberMonths + " rounds. ";
+	    speechOutput = speechOutput + "Net worth is " + currency + netWorth + " after " + highScores[i].numberMonths + " rounds. ";
 	}
 
 	    speechOutput = speechOutput + "To customize your name, please say something like, Update user name to Thomas.";
@@ -299,9 +304,12 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     "ListCities": function() {
         console.log("List Cities");
         var speechOutput = "Here are the potential cities to put stations into. ";
+	// start by listing the base cities that all game participants have
         for (var i = 0; i < cities.length; i++ ) {
             speechOutput = speechOutput + cities[i] + ", ";
         }
+	// if have reached the second level of the game, enable a second tier of cities
+	// wrap-up statement by makingn a recommendation
             speechOutput = speechOutput + "If you would like to build in one of these sites, please " +
                 "say something like, Build a station in " + cities[0];
         var repromptOutput = "If you would like to build a station, please say something like, " +
@@ -433,12 +441,14 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         // validate that the city name is valid to build a station in
         if (this.event.request.intent.slots.CityName.value) {
             console.log("validate city name: " + this.event.request.intent.slots.CityName.value);
+	    // start by checking the cities available to all players
             for (var i = 0; i < cities.length; i++) {
                 if (this.event.request.intent.slots.CityName.value.toLowerCase() === cities[i].toLowerCase()) {
                     console.log(cities[i] + " is a valid city name.")
                     validStation = true;
                 }
             }
+	    // check which level the player is, and add more possible if they are at level two
 	    if (!validStation) {
 		console.log(this.event.request.intent.slots.CityName + " is not a valid city to build a station in.");
 	    }
@@ -691,6 +701,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             } else {
                 speechOutput = speechOutput + "To generate more profit, add more routes by connecting stations together. ";
             }
+	    // check if the second game level has been reached, the add reward
+
             console.log(JSON.stringify(trainFinancials));
         }
 	VoiceLabs.track(this.event.session, 'Run Empire', null, speechOutput, (error, response) => {
