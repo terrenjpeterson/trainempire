@@ -40,7 +40,8 @@
         "distances":[
             {"toCity":"Bradford","distance":70},
             {"toCity":"Edinburgh","distance":410},
-            {"toCity":"Glasgow","distance":414}
+            {"toCity":"Glasgow","distance":414},
+	    {"toCity":"Manchester","distance":61}
         ]
     },
     {
@@ -57,7 +58,9 @@
         "distances":[
             {"toCity":"Birmingham","distance":165},
             {"toCity":"Wirral","distance":10},
-            {"toCity":"Leeds","distance":117}
+            {"toCity":"Leeds","distance":117},
+	    {"toCity":"Bradford","distance":109},
+	    {"toCity":"Manchester","distance":55}
         ]
     },
     {
@@ -117,5 +120,60 @@
             {"toCity":"Edinburgh","distance":167},
 	    {"toCity":"Manchester","distance":231}
         ]
-    } 
+    },
+    {
+        "fromCity":"Cambridge",
+        "distances":[
+            {"toCity":"London","distance":105},
+            {"toCity":"Nottingham","distance":141}
+        ]
+    },
+    {
+        "fromCity":"Oxford",
+        "distances":[
+            {"toCity":"London","distance":96},
+            {"toCity":"Bristol","distance":117},
+            {"toCity":"Coventry","distance":96},
+            {"toCity":"Reading","distance":42}
+        ]
+    },
+    {
+        "fromCity":"Nottingham",
+        "distances":[
+            {"toCity":"London","distance":211},
+            {"toCity":"Birmingham","distance":82},
+            {"toCity":"Sheffield","distance":71},
+            {"toCity":"Coventry","distance":81},
+            {"toCity":"Cambridge","distance":141}
+        ]
+    },
+    {
+        "fromCity":"Reading",
+        "distances":[
+            {"toCity":"London","distance":67},
+            {"toCity":"Oxford","distance":42}
+        ]
+    },
+    {
+        "fromCity":"Plymouth",
+        "distances":[
+            {"toCity":"Bristol","distance":195}
+        ]
+    },
+    {
+        "fromCity":"Coventry",
+        "distances":[
+            {"toCity":"London","distance":157},
+            {"toCity":"Birmingham","distance":30},
+            {"toCity":"Nottingham","distance":81}
+        ]
+    },
+    {
+        "fromCity":"Cardiff",
+        "distances":[
+            {"toCity":"Birmingham","distance":189},
+            {"toCity":"Bristol","distance":72},
+            {"toCity":"Manchester","distance":303}
+        ]
+    }
 ]

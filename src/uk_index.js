@@ -336,7 +336,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
             var toCity = this.event.request.intent.slots.ToCity.value;
             // these are used to track the route distance if found and will direct the user response
             var validRoute = false;
-            var validFromCity = true;
+            var validFromCity = false;
             var routeDistance = 0;
             var speechOutput = "";
             var repromptOutput = "";
@@ -345,54 +345,48 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
                 // start by matching the starting point city name
                 if (fromCity.toLowerCase() === cityConnections[i].fromCity.toLowerCase()) {
                     console.log("From city is valid : " + fromCity);
+		    validFromCity = true;
                     for (var j = 0; j < cityConnections[i].distances.length; j++) {
                         // check if destination matches the request.
                         if (toCity.toLowerCase() === cityConnections[i].distances[j].toCity.toLowerCase()) {
-                            //console.log("Matched Route at a distance of " + cityConnections[i].distances[j].distance);
                             routeDistance = cityConnections[i].distances[j].distance;
                             validRoute = true;
                         }
                     }
                 }
-                // create the response based on logic above
-                if (validRoute) {
-                    speechOutput = fromCity + " is " + routeDistance + " " + trackMeasure + " from " + toCity + ". ";
-                    if (this.attributes['budget'] < (routeDistance * railCostPerMile)) {
-                        speechOutput = "It requires " + currency + (routeDistance * railCostPerMile) + " to build " +
-                            "this track, which is more than your cash on hand. Please run your trains " +
-                            "for a while longer to get the funds to do this.";
-                        repromptOutput = "If you would like to run trains, please say, Run Empire.";
-                    } else {
-                        speechOutput = speechOutput + "If you would like to connect these two locations, please say " +
-                            "Add track between " + fromCity + " to " + toCity + ". " +
-                            "You have the necessary " + currency + (routeDistance * railCostPerMile) + " to build.";
-                        repromptOutput = "If you would like to connect these two cities, please say " +
-                            "Add track between " + fromCity + " to " + toCity + ". ";
-                    }
-                } else if (validFromCity) {
-                    if (fromCity.toLowerCase() === cityConnections[i].fromCity.toLowerCase()) {
-                        console.log("two cities are valid, but don't connect:" + fromCity + " " + toCity);
-                    }
-                    speechOutput = "No route found from " + fromCity + " to " + toCity + ". " +
-                        "Please pick another route to connect from " + fromCity + ". ";
-                    //    "Your options to pick from are, ";
-                    // list the valid connections to that city.
-                    console.log(JSON.stringify(cityConnections[i].distances));
-                    //for (var j = 0; j < cityConnections[i].distances.length; j++) {
-                    //    speechOutput = speechOutput + cityConnections[i].distances[j].toCity + ", ";
-                    //}
-                    repromptOutput = "Sorry, no route found between " + fromCity + " and " + toCity +
-                        ". If you would like to try another city from " + fromCity + ", " +
-                        "please try again.";
+	    }
+            // create the response based on logic above - start with a valid route
+            if (validRoute) {
+	    	console.log("Valid route " + fromCity + " to " + toCity + " is " + routeDistance + trackMeasure);
+                speechOutput = fromCity + " is " + routeDistance + " " + trackMeasure + " from " + toCity + ". ";
+                if (this.attributes['budget'] < (routeDistance * railCostPerMile)) {
+                    speechOutput = "It requires " + currency + (routeDistance * railCostPerMile) + " to build " +
+                        "this track, which is more than your cash on hand. Please run your trains " +
+                        "for a while longer to get the funds to do this.";
+                    repromptOutput = "If you would like to run trains, please say, Run Empire.";
                 } else {
-                    console.log("Doesn't match city: " + cityConnections[i].fromCity);
-                    speechOutput = "Can't find " + fromCity + ".";
-                    repromptOutput = "Sorry, we couldn't find " + fromCity + " in our maps. Please " +
-                        "try again.";
-                    validFromCity = false;
+                    speechOutput = speechOutput + "If you would like to connect these two locations, please say " +
+                        "Add track between " + fromCity + " to " + toCity + ". " +
+                        "You have the necessary " + currency + (routeDistance * railCostPerMile) + " to build.";
+                    repromptOutput = "If you would like to connect these two cities, please say " +
+                        "Add track between " + fromCity + " to " + toCity + ". ";
                 }
+	    // these are the error messages when the route wasn't valid
+            } else if (validFromCity) {
+		console.log("No route found to connect " + fromCity + " and " + toCity + ".");
+                speechOutput = "No route found from " + fromCity + " to " + toCity + ". " +
+                    "Please pick another route to connect from " + fromCity + ". ";
+                repromptOutput = "Sorry, no route found between " + fromCity + " and " + toCity +
+                    ". If you would like to try another city from " + fromCity + ", " +
+                    "please try again.";
+            } else {
+                console.log("Doesn't match city: " + fromCity);
+                speechOutput = "Can't find " + fromCity + " as a valid city to build from. Please " +
+		    "try again with a different city name.";
+                repromptOutput = "Sorry, we couldn't find " + fromCity + " in our maps. Please " +
+                    "try again.";
             }
-            //cityConnections
+
             this.emit(':ask', speechOutput, repromptOutput);  
         } else {
             this.emit(':tell', "Sorry, please provide the city names.");  
