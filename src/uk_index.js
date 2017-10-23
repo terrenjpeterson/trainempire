@@ -302,18 +302,22 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
     // this is the function that lists out all of the available cities that stations can be built in.
     "ListCities": function() {
-        console.log("List Cities");
+        console.log("List Cities per user request");
+
+	// retreive potential cities based on game progress
+	var potentialCities = getValidCities(this.attributes['month'], this.attributes['stations']).validCities;
+
         var speechOutput = "Here are the potential cities to put stations into. ";
 	// start by listing the base cities that all game participants have
-        for (var i = 0; i < cities.length; i++ ) {
-            speechOutput = speechOutput + cities[i] + ", ";
+        for (var i = 0; i < potentialCities.length; i++ ) {
+            speechOutput = speechOutput + potentialCities[i] + ", ";
         }
-	// if have reached the second level of the game, enable a second tier of cities
 	// wrap-up statement by makingn a recommendation
             speechOutput = speechOutput + "If you would like to build in one of these sites, please " +
                 "say something like, Build a station in " + cities[0];
         var repromptOutput = "If you would like to build a station, please say something like, " +
             "Build a station in " + cities[cities.length] + ".";
+
         this.emit(':ask', speechOutput, repromptOutput);  
     },
     // this is the function invoked when the user wants to know how much money they have to spend.
@@ -442,15 +446,15 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         if (this.event.request.intent.slots.CityName.value) {
             console.log("validate city name: " + this.event.request.intent.slots.CityName.value);
 	    // start by checking the cities available to all players
-            for (var i = 0; i < cities.length; i++) {
-                if (this.event.request.intent.slots.CityName.value.toLowerCase() === cities[i].toLowerCase()) {
-                    console.log(cities[i] + " is a valid city name.")
+	    var potentialCities = getValidCities(this.attributes['month'], this.attributes['stations']).validCities;
+            for (var i = 0; i < potentialCities.length; i++) {
+                if (this.event.request.intent.slots.CityName.value.toLowerCase() === potentialCities[i].toLowerCase()) {
+                    console.log(potentialCities[i] + " is a valid city name.")
                     validStation = true;
                 }
             }
-	    // check which level the player is, and add more possible if they are at level two
 	    if (!validStation) {
-		console.log(this.event.request.intent.slots.CityName + " is not a valid city to build a station in.");
+		console.log(this.event.request.intent.slots.CityName.value + " is not a valid city to build a station in.");
 	    }
         }
         // validate that the station hasn't already been built
@@ -892,5 +896,19 @@ function validateConnection(currentConnections, currentStations, connection, cur
     
     return {
         newConnection
+    };
+}
+
+// this determines what are the valid cities based on how far advanced the game is
+function getValidCities(month, stations) {
+    console.log("retrieving cities for game in month: " + month + " with current stations: " + stations);
+    var validCities = cities;
+
+    //    for (var i = 0; i < cities.length; i++ ) {
+    //        speechOutput = speechOutput + cities[i] + ", ";
+    //    }
+
+    return {
+        validCities
     };
 }
